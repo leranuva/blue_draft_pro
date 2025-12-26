@@ -792,6 +792,12 @@ php artisan vendor:publish --tag=filament-assets
 
 ## 🌐 Despliegue
 
+### 📚 Guía Completa de Despliegue
+
+Para una guía detallada de despliegue en **Hostinger**, consulta:
+- **[Guía de Despliegue en Hostinger](docs/DEPLOYMENT_HOSTINGER.md)** - Guía paso a paso completa
+- **[Checklist de Despliegue](DEPLOYMENT_CHECKLIST.md)** - Checklist para verificar todos los pasos
+
 ### Preparación para Producción
 
 1. Cambiar `APP_ENV=production` y `APP_DEBUG=false` en `.env`
