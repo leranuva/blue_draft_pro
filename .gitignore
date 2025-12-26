@@ -13,9 +13,10 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
 /public/hot
 /public/storage
+# Los archivos compilados SÍ deben subirse para producción
+# /public/build
 /storage/*.key
 /storage/pail
 /vendor
