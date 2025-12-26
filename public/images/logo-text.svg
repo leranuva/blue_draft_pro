@@ -1,0 +1,10 @@
+<svg width="180" height="50" viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg">
+  <!-- Text Logo -->
+  <g>
+    <text x="0" y="28" font-family="'Playfair Display', serif" font-size="30" font-weight="700" fill="#003366" letter-spacing="-0.8">Blue</text>
+    <text x="0" y="48" font-family="'Playfair Display', serif" font-size="30" font-weight="700" fill="#336699" letter-spacing="-0.8">Draft</text>
+  </g>
+  
+  <!-- Decorative underline -->
+  <line x1="0" y1="32" x2="175" y2="32" stroke="#CCCC99" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+</svg>

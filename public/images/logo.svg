@@ -1,0 +1,23 @@
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Construction icon group -->
+  <g id="icon-group" transform="translate(5, 8)">
+    <!-- Blueprint/Draft paper -->
+    <rect x="0" y="0" width="20" height="26" fill="#CCCC99" rx="2" stroke="#003366" stroke-width="1.5"/>
+    <!-- Blueprint lines -->
+    <line x1="4" y1="6" x2="16" y2="6" stroke="#003366" stroke-width="1.2"/>
+    <line x1="4" y1="10" x2="14" y2="10" stroke="#336699" stroke-width="1"/>
+    <line x1="4" y1="14" x2="16" y2="14" stroke="#003366" stroke-width="1.2"/>
+    <line x1="4" y1="18" x2="12" y2="18" stroke="#336699" stroke-width="1"/>
+    <!-- Corner fold -->
+    <path d="M 0 0 L 6 0 L 0 6 Z" fill="#336699" opacity="0.3"/>
+  </g>
+  
+  <!-- Text -->
+  <g id="text-group" transform="translate(32, 0)">
+    <text x="0" y="22" font-family="'Playfair Display', serif" font-size="26" font-weight="700" fill="#003366" letter-spacing="-0.5">Blue</text>
+    <text x="0" y="42" font-family="'Playfair Display', serif" font-size="26" font-weight="700" fill="#336699" letter-spacing="-0.5">Draft</text>
+  </g>
+  
+  <!-- Decorative line under text -->
+  <line x1="32" y1="28" x2="195" y2="28" stroke="#CCCC99" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+</svg>

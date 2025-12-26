@@ -1,0 +1,12 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blueprint icon for favicon -->
+  <rect x="4" y="4" width="24" height="24" fill="#003366" rx="3"/>
+  <rect x="6" y="6" width="20" height="20" fill="#CCCC99" rx="2"/>
+  <!-- Blueprint lines -->
+  <line x1="9" y1="11" x2="23" y2="11" stroke="#003366" stroke-width="1.5"/>
+  <line x1="9" y1="15" x2="20" y2="15" stroke="#336699" stroke-width="1"/>
+  <line x1="9" y1="19" x2="23" y2="19" stroke="#003366" stroke-width="1.5"/>
+  <line x1="9" y1="23" x2="17" y2="23" stroke="#336699" stroke-width="1"/>
+</svg>
+
+
