@@ -1,0 +1,46 @@
+ARCHIVOS Y CARPETAS A SUBIR A HOSTINGER
+========================================
+
+✅ SUBIR TODO:
+
+CARPETAS:
+- app/
+- bootstrap/
+- config/
+- database/
+- docs/
+- public/ (TODO, incluyendo .htaccess y build/)
+- resources/
+- routes/
+- storage/ (pero NO los archivos .key)
+
+ARCHIVOS RAÍZ:
+- artisan
+- composer.json
+- composer.lock
+- package.json
+- package-lock.json
+- README.md
+- DEPLOYMENT_CHECKLIST.md
+- deploy.sh
+- create-env.sh
+- env-production-template.txt
+- .gitignore
+
+❌ NO SUBIR:
+
+- .env
+- .env.backup
+- .env.production
+- vendor/
+- node_modules/
+- storage/*.key
+- public/hot
+- public/storage (enlace simbólico)
+- .git/
+
+VERIFICAR ANTES DE SUBIR:
+- ✅ npm run build ejecutado
+- ✅ public/build/assets/ existe con archivos compilados
+- ✅ public/.htaccess existe
+
