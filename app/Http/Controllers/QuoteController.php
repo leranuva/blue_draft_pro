@@ -225,6 +225,6 @@ class QuoteController extends Controller
 
         AddLeadToEmailSequence::dispatch($quote);
 
-        return back()->with('success', '¡Gracias por tu solicitud de cotización! Revisaremos tus datos y te contactaremos pronto.');
+        return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
     }
 }

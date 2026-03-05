@@ -55,7 +55,14 @@ class CustomDashboard extends BaseDashboard
             return $this->buildViewData();
         } catch (\Throwable $e) {
             report($e);
-            return $this->getFallbackViewData();
+            \Log::error('Dashboard buildViewData failed', [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+            $fallback = $this->getFallbackViewData();
+            $fallback['_dashboard_error'] = $e->getMessage();
+            return $fallback;
         }
     }
 
@@ -186,7 +193,7 @@ class CustomDashboard extends BaseDashboard
                     ->count(),
             ],
             'bySource' => Quote::selectRaw("COALESCE(NULLIF(lead_source, ''), NULLIF(utm_source, ''), 'website') as source, count(*) as total")
-                ->groupByRaw("COALESCE(NULLIF(lead_source, ''), NULLIF(utm_source, ''), 'website')")
+                ->groupByRaw('1')
                 ->orderByDesc('total')
                 ->limit(8)
                 ->get(),
@@ -205,30 +212,30 @@ class CustomDashboard extends BaseDashboard
                 ->take(5)
                 ->get(),
 
-            // MEJORA 1: Revenue por fuente (ROI real)
+            // Revenue by source (real ROI)
             'revenueBySource' => $this->getRevenueBySource(),
 
-            // MEJORA 2: Velocidad comercial
+            // Sales velocity
             'velocity' => [
                 'to_first_contact' => (int) round($this->avgDaysBetween('created_at', 'first_contacted_at', null)),
                 'to_proposal' => (int) round($this->avgDaysBetween('created_at', 'proposal_sent_at', null)),
                 'to_close' => (int) round($this->getAvgCloseDays()),
             ],
 
-            // MEJORA 3: Score vs Close Rate
+            // Score vs Close Rate
             'scoreVsClose' => $this->getScoreVsClose(),
 
-            // MEJORA 4: Forecast predictivo
+            // Predictive forecast
             'forecast' => $this->getForecast($wonRevenue, $pipelineRevenue, $proposalCount, $wonCount),
 
-            // MEJORA 5: Borough profundo
+            // Borough deep analysis
             'boroughDeep' => $this->getBoroughDeep(),
 
-            // Margen por fuente y borough (calculator leads con expected_margin)
+            // Expected margin by source and borough (calculator leads with expected_margin)
             'marginBySource' => $this->getMarginBySource(),
             'marginByBorough' => $this->getMarginByBorough(),
 
-            // Métricas derivadas calculadora (para landing ads)
+            // Calculator derived metrics (for landing ads)
             'calculatorMetrics' => $this->getCalculatorDerivedMetrics(),
         ];
     }
@@ -266,7 +273,7 @@ class CustomDashboard extends BaseDashboard
         return Quote::selectRaw("$sourceExpr as source, count(*) as leads,
             sum(case when stage = 'won' then 1 else 0 end) as won,
             coalesce(sum(case when stage = 'won' then closed_value else 0 end), 0) as revenue")
-            ->groupByRaw($sourceExpr)
+            ->groupByRaw('1')
             ->orderByDesc('revenue')
             ->limit(10)
             ->get()
@@ -341,7 +348,7 @@ class CustomDashboard extends BaseDashboard
             coalesce(sum(expected_margin), 0) as total_margin,
             coalesce(sum(estimated_value), 0) as total_value")
             ->whereNotNull('expected_margin')
-            ->groupByRaw($sourceExpr)
+            ->groupByRaw('1')
             ->orderByDesc('total_margin')
             ->limit(10)
             ->get()

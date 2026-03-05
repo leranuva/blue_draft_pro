@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Quote extends Model
@@ -117,6 +119,27 @@ class Quote extends Model
                     'stage' => $quote->stage,
                     'entered_at' => now(),
                 ]);
+            }
+        });
+
+        static::deleting(function (Quote $quote) {
+            // Delete related records before parent (avoids FK constraint errors if DB cascades are missing)
+            try {
+                $quote->attachments()->delete();
+            } catch (\Throwable $e) {
+                // Ignore if table doesn't exist or other DB issues
+            }
+            try {
+                $quote->stageHistory()->delete();
+            } catch (\Throwable $e) {
+                // Ignore if table doesn't exist or other DB issues
+            }
+            try {
+                if (Schema::hasTable('quote_email_sequence_log')) {
+                    DB::table('quote_email_sequence_log')->where('quote_id', $quote->id)->delete();
+                }
+            } catch (\Throwable $e) {
+                // Ignore
             }
         });
     }

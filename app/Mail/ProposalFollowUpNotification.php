@@ -20,7 +20,7 @@ class ProposalFollowUpNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '📋 Follow-up propuesta — ' . $this->quote->client_name . ' (5+ días)',
+            subject: '📋 Proposal follow-up — ' . $this->quote->client_name . ' (5+ days)',
         );
     }
 

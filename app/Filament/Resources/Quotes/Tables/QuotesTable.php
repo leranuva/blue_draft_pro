@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\Quotes\Tables;
 
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -140,7 +141,12 @@ class QuotesTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    BulkAction::make('delete')
+                        ->label('Delete selected')
+                        ->icon('heroicon-o-trash')
+                        ->color('danger')
+                        ->requiresConfirmation(false)
+                        ->action(fn (Collection $records) => $records->each->delete()),
                 ]),
             ]);
     }

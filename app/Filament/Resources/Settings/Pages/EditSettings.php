@@ -32,7 +32,7 @@ class EditSettings extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Si es una imagen y tiene un valor, asegurar que se muestre correctamente en el FileUpload
+        // If it's an image and has a value, ensure it displays correctly in FileUpload
         if (isset($data['type']) && $data['type'] === 'image' && isset($data['value']) && $data['value']) {
             // Filament FileUpload espera que las rutas sean relativas al disco
             if (is_string($data['value']) && str_starts_with($data['value'], 'storage/')) {

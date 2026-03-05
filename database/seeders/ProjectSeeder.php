@@ -53,7 +53,7 @@ class ProjectSeeder extends Seeder
         ];
 
         foreach ($projects as $project) {
-            // Verificar si el proyecto ya existe antes de crearlo
+            // Check if project already exists before creating
             $exists = Project::where('title', $project['title'])
                 ->where('category', $project['category'])
                 ->exists();

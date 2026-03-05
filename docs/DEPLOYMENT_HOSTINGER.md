@@ -50,9 +50,12 @@ cd public_html  # o domains/bluedraft.cc/public_html
 git clone https://github.com/tu-repo/blue_draft_pro.git .
 ```
 
-### Opción B: FTP / File Manager
+### Opción B: FTP / File Manager (despliegue manual)
 
-Sube todo el proyecto excepto `.env`, `vendor/`, `node_modules/`.
+**Recomendado:** Ejecuta `.\prepare-deploy.ps1` localmente para generar `deploy/blue_draft_pro_deploy.zip`.  
+Sube el ZIP a Hostinger, extráelo en `public_html` y sigue [HOSTINGER_MANUAL_DEPLOY.md](HOSTINGER_MANUAL_DEPLOY.md).
+
+O sube todo el proyecto excepto `.env`, `vendor/`, `node_modules/`.
 
 ---
 

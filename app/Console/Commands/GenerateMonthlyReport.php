@@ -12,41 +12,41 @@ use Illuminate\Support\Facades\Storage;
 class GenerateMonthlyReport extends Command
 {
     protected $signature = 'report:monthly
-                            {--month= : Mes (1-12), default: mes anterior}
-                            {--year= : Año, default: año actual o anterior}
-                            {--email : Enviar PDF por email al admin}
-                            {--no-pdf : Solo mostrar en consola, no generar PDF}';
+                            {--month= : Month (1-12), default: previous month}
+                            {--year= : Year, default: current or previous}
+                            {--email : Send PDF by email to admin}
+                            {--no-pdf : Show in console only, do not generate PDF}';
 
-    protected $description = 'Genera reporte ejecutivo mensual con KPIs (leads, conversión, revenue, borough, servicio)';
+    protected $description = 'Generate monthly executive report with KPIs (leads, conversion, revenue, borough, service)';
 
     public function handle(): int
     {
         $month = (int) ($this->option('month') ?: now()->subMonth()->month);
         $year = (int) ($this->option('year') ?: now()->subMonth()->year);
         $period = Carbon::create($year, $month, 1);
-        $periodLabel = $period->translatedFormat('F Y');
+        $periodLabel = $period->locale('en')->translatedFormat('F Y');
 
         $data = $this->gatherReportData($period);
 
-        $this->info("=== Reporte Ejecutivo: {$periodLabel} ===");
+        $this->info("=== Executive Report: {$periodLabel} ===");
         $this->table(
-            ['KPI', 'Valor'],
+            ['KPI', 'Value'],
             [
-                ['Leads totales', $data['leads_total']],
-                ['Leads contactados <24h (%)', $data['contacted_24h_pct'] . '%'],
-                ['Propuestas enviadas', $data['proposals_sent']],
+                ['Total leads', $data['leads_total']],
+                ['Leads contacted <24h (%)', $data['contacted_24h_pct'] . '%'],
+                ['Proposals sent', $data['proposals_sent']],
                 ['Close rate (%)', $data['close_rate_pct'] . '%'],
-                ['Tiempo promedio cierre (días)', $data['avg_close_days']],
-                ['Revenue ganado', '$' . number_format($data['revenue_won'], 0)],
-                ['Pipeline potencial', '$' . number_format($data['revenue_pipeline'], 0)],
-                ['Borough dominante', $data['top_borough']],
-                ['Servicio dominante', $data['top_service']],
+                ['Avg. time to close (days)', $data['avg_close_days']],
+                ['Revenue earned', '$' . number_format($data['revenue_won'], 0)],
+                ['Pipeline potential', '$' . number_format($data['revenue_pipeline'], 0)],
+                ['Top borough', $data['top_borough']],
+                ['Top service', $data['top_service']],
             ]
         );
 
         if (!$this->option('no-pdf')) {
             $pdfPath = $this->generatePdf($period, $periodLabel, $data);
-            $this->info("PDF generado: {$pdfPath}");
+            $this->info("PDF generated: {$pdfPath}");
 
             if ($this->option('email')) {
                 $this->sendReportEmail($pdfPath, $periodLabel);
@@ -211,16 +211,16 @@ class GenerateMonthlyReport extends Command
     {
         $to = config('mail.admin_notification_email');
         if (!$to) {
-            $this->warn('No ADMIN_NOTIFICATION_EMAIL configurado. No se envía email.');
+            $this->warn('No ADMIN_NOTIFICATION_EMAIL configured. Email not sent.');
             return;
         }
 
-        Mail::raw("Reporte ejecutivo mensual: {$periodLabel}. Ver adjunto.", function ($message) use ($to, $pdfPath, $periodLabel) {
+        Mail::raw("Monthly executive report: {$periodLabel}. See attachment.", function ($message) use ($to, $pdfPath, $periodLabel) {
             $message->to($to)
-                ->subject("Blue Draft — Reporte Ejecutivo {$periodLabel}")
-                ->attach($pdfPath, ['as' => "reporte-{$periodLabel}.pdf"]);
+                ->subject("Blue Draft — Executive Report {$periodLabel}")
+                ->attach($pdfPath, ['as' => "report-{$periodLabel}.pdf"]);
         });
 
-        $this->info("Reporte enviado a {$to}");
+        $this->info("Report sent to {$to}");
     }
 }

@@ -28,7 +28,7 @@ class SettingsResource extends Resource
     
     public static function shouldRegisterNavigation(): bool
     {
-        return false; // Ocultar del menú de navegación, usamos páginas personalizadas por sección
+        return false; // Hidden from nav menu, we use custom pages per section
     }
 
     public static function form(Schema $schema): Schema

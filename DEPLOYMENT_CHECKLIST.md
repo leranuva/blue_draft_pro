@@ -2,7 +2,7 @@
 
 **Nota:** Hostinger shared hosting usa MySQL por defecto. Usa `DB_CONNECTION=mysql` en `.env`. Para PostgreSQL (VPS), usa `DB_CONNECTION=pgsql`.
 
-**Guía detallada:** [docs/DEPLOYMENT_HOSTINGER.md](docs/DEPLOYMENT_HOSTINGER.md) | **Pre-deploy:** [docs/PRE_DEPLOY.md](docs/PRE_DEPLOY.md)
+**Guía detallada:** [docs/DEPLOYMENT_HOSTINGER.md](docs/DEPLOYMENT_HOSTINGER.md) | **Despliegue manual (FTP):** [docs/HOSTINGER_MANUAL_DEPLOY.md](docs/HOSTINGER_MANUAL_DEPLOY.md) | **Pre-deploy:** [docs/PRE_DEPLOY.md](docs/PRE_DEPLOY.md)
 
 Usa esta checklist para asegurarte de que todo esté listo antes y después del despliegue.
 

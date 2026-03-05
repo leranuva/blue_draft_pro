@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
                 'certifications' => $footerSettings['footer_certifications'] ?? null,
             ]);
         } catch (\Exception $e) {
-            // Si la tabla no existe aún, usar valores por defecto
+            // If table doesn't exist yet, use default values
             View::share('footer', [
                 'description' => 'Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.',
                 'address' => '358 Amboy St, Brooklyn, NY 11212, USA',

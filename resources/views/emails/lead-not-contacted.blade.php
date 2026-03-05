@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead sin contactar</title>
+    <title>Lead not contacted</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
         .header { background: #dc2626; color: white; padding: 24px; text-align: center; border-radius: 8px 8px 0 0; }
@@ -16,21 +16,21 @@
 </head>
 <body>
     <div class="header">
-        <h1>⚠️ Lead sin contactar (24+ horas)</h1>
-        <p>Blue Draft — Recordatorio automático</p>
+        <h1>⚠️ Lead not contacted (24+ hours)</h1>
+        <p>Blue Draft — Automatic reminder</p>
     </div>
     <div class="content">
-        <p>Este lead lleva <strong>más de 24 horas</strong> sin ser contactado.</p>
+        <p>This lead has been <strong>uncontacted for over 24 hours</strong>.</p>
         <div class="info-box">
-            <p><span class="label">Cliente:</span> {{ $quote->client_name }}</p>
+            <p><span class="label">Client:</span> {{ $quote->client_name }}</p>
             <p><span class="label">Email:</span> <a href="mailto:{{ $quote->email }}">{{ $quote->email }}</a></p>
-            @if($quote->phone)<p><span class="label">Teléfono:</span> <a href="tel:{{ $quote->phone }}">{{ $quote->phone }}</a></p>@endif
-            <p><span class="label">Servicio:</span> {{ ucfirst($quote->service_type) }}</p>
+            @if($quote->phone)<p><span class="label">Phone:</span> <a href="tel:{{ $quote->phone }}">{{ $quote->phone }}</a></p>@endif
+            <p><span class="label">Service:</span> {{ ucfirst($quote->service_type) }}</p>
             <p><span class="label">Score:</span> {{ $quote->lead_score }}/12 ({{ \App\Models\Quote::getScoreLabel($quote->lead_score) }})</p>
-            <p><span class="label">Recibido:</span> {{ $quote->created_at->diffForHumans() }}</p>
+            <p><span class="label">Received:</span> {{ $quote->created_at->diffForHumans() }}</p>
         </div>
-        <a href="{{ config('app.url') }}/system-bd-access/quotes/{{ $quote->id }}/edit" class="button">Ver en panel →</a>
+        <a href="{{ config('app.url') }}/system-bd-access/quotes/{{ $quote->id }}/edit" class="button">View in panel →</a>
     </div>
-    <div class="footer">Blue Draft — Sistema de seguimiento de leads</div>
+    <div class="footer">Blue Draft — Lead tracking system</div>
 </body>
 </html>

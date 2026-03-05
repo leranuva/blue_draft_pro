@@ -258,7 +258,7 @@ class HomeController extends Controller
                 'ip_address' => $request->ip(),
             ], $tracking));
 
-            // Procesar y guardar fotos si existen
+            // Process and save photos if they exist
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
                     $path = $photo->store('quotes/' . $quote->id, 'public');
@@ -273,10 +273,10 @@ class HomeController extends Controller
                 }
             }
 
-            // Cargar relaciones para el email
+            // Load relations for email
             $quote->load('attachments');
             
-            // Enviar notificación por correo
+            // Send notification email
             try {
                 Mail::to(config('mail.admin_notification_email'))->send(new QuoteNotification($quote));
                 Log::info('Quote notification email sent', [
@@ -298,7 +298,7 @@ class HomeController extends Controller
 
             AddLeadToEmailSequence::dispatch($quote);
 
-            return back()->with('success', '¡Gracias por tu solicitud de cotización! Revisaremos tus fotos y te contactaremos pronto con una estimación.');
+            return back()->with('success', 'Thank you for your quote request! We will review your photos and contact you soon with an estimate.');
         } else {
             $tracking = Quote::extractTrackingFromRequest($request);
             $quote = Quote::create(array_merge([
@@ -327,7 +327,7 @@ class HomeController extends Controller
                 'ip_address' => $request->ip(),
             ], $tracking));
 
-            // Enviar notificación por correo
+            // Send notification email
             try {
                 Mail::to(config('mail.admin_notification_email'))->send(new ContactNotification($quote));
                 Log::info('Contact notification email sent', [

@@ -20,7 +20,7 @@ class LeadNotContactedNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '⚠️ Lead sin contactar 24h — ' . $this->quote->client_name,
+            subject: '⚠️ Lead not contacted 24h — ' . $this->quote->client_name,
         );
     }
 

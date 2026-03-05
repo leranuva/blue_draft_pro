@@ -64,6 +64,6 @@ class QuoteResource extends Resource
     
     public static function canCreate(): bool
     {
-        return false; // No crear cotizaciones desde el admin, solo ver las que llegan
+        return false; // Don't create quotes from admin, only view incoming ones
     }
 }

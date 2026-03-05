@@ -14,6 +14,7 @@
 /auth.json
 /node_modules
 /public/hot
+/deploy
 /public/storage
 # Los archivos compilados SÍ deben subirse para producción
 # /public/build

@@ -1,6 +1,7 @@
 <x-filament-panels::page>
     @php
         $data = method_exists($this, 'getViewData') ? $this->getViewData() : [];
+        $dashboardError = $data['_dashboard_error'] ?? null;
         $pipeline = $data['pipeline'] ?? [];
         $funnel = $data['funnel'] ?? [];
         $alerts = $data['alerts'] ?? [];
@@ -17,56 +18,63 @@
         $calculatorMetrics = $data['calculatorMetrics'] ?? [];
     @endphp
     <div style="padding: 1.5rem; max-width: 100%;">
-        <!-- KPIs Ejecutivos: Leads Mensuales + Revenue -->
+        @if($dashboardError)
+        <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+            <strong style="color: #991b1b;">⚠️ Dashboard error:</strong>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: #b91c1c;">{{ $dashboardError }}</p>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: #6b7280;">Run <code>php artisan migrate --force</code> on the server and check <code>storage/logs/laravel.log</code></p>
+        </div>
+        @endif
+        <!-- Executive KPIs: Monthly Leads + Revenue -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
             <div style="background: linear-gradient(135deg, #003366 0%, #336699 100%); border-radius: 0.5rem; padding: 1.25rem; color: white; box-shadow: 0 2px 8px rgba(0,51,102,0.2);">
-                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Leads este mes</div>
+                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Leads this month</div>
                 <div style="font-size: 2rem; font-weight: bold;">{{ $monthlyLeads['current'] }}</div>
                 <div style="font-size: 0.85rem; margin-top: 0.5rem;">
                     @if($monthlyLeads['variation'] >= 0)
-                        <span style="color: #86efac;">↑ {{ $monthlyLeads['variation_pct'] }}%</span> vs mes anterior ({{ $monthlyLeads['previous'] }})
+                        <span style="color: #86efac;">↑ {{ $monthlyLeads['variation_pct'] }}%</span> vs previous month ({{ $monthlyLeads['previous'] }})
                     @else
-                        <span style="color: #fca5a5;">↓ {{ abs($monthlyLeads['variation_pct']) }}%</span> vs mes anterior ({{ $monthlyLeads['previous'] }})
+                        <span style="color: #fca5a5;">↓ {{ abs($monthlyLeads['variation_pct']) }}%</span> vs previous month ({{ $monthlyLeads['previous'] }})
                     @endif
                 </div>
             </div>
             <div style="background: linear-gradient(135deg, #047857 0%, #059669 100%); border-radius: 0.5rem; padding: 1.25rem; color: white; box-shadow: 0 2px 8px rgba(4,120,87,0.2);">
-                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Revenue ganado</div>
+                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Revenue earned</div>
                 <div style="font-size: 1.5rem; font-weight: bold;">${{ number_format($revenue['won'], 0) }}</div>
-                <div style="font-size: 0.85rem; margin-top: 0.5rem;">Cerrados con valor</div>
+                <div style="font-size: 0.85rem; margin-top: 0.5rem;">Closed with value</div>
             </div>
             <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); border-radius: 0.5rem; padding: 1.25rem; color: white; box-shadow: 0 2px 8px rgba(30,64,175,0.2);">
-                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Pipeline potencial</div>
+                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Pipeline potential</div>
                 <div style="font-size: 1.5rem; font-weight: bold;">${{ number_format($revenue['pipeline'], 0) }}</div>
                 <div style="font-size: 0.85rem; margin-top: 0.5rem;">Qualified + Proposal Sent</div>
             </div>
             <div style="background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%); border-radius: 0.5rem; padding: 1.25rem; color: white; box-shadow: 0 2px 8px rgba(124,58,237,0.2);">
-                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Ticket promedio</div>
+                <div style="font-size: 0.8rem; opacity: 0.9; margin-bottom: 0.25rem;">Average ticket</div>
                 <div style="font-size: 1.5rem; font-weight: bold;">${{ number_format($revenue['avgTicket'], 0) }}</div>
-                <div style="font-size: 0.85rem; margin-top: 0.5rem;">Por proyecto cerrado</div>
+                <div style="font-size: 0.85rem; margin-top: 0.5rem;">Per closed project</div>
             </div>
         </div>
 
-        <!-- MEJORA 2: Velocidad comercial -->
+        <!-- Sales velocity -->
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">⚡ Velocidad comercial (días promedio)</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">⚡ Sales velocity (avg days)</h3>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
                 <div style="text-align: center; padding: 1rem; background: #eff6ff; border-radius: 0.5rem;">
                     <div style="font-size: 1.5rem; font-weight: bold; color: #1d4ed8;">{{ $velocity['to_first_contact'] }}</div>
-                    <div style="font-size: 0.8rem; color: #1e40af;">Hasta primer contacto</div>
+                    <div style="font-size: 0.8rem; color: #1e40af;">To first contact</div>
                 </div>
                 <div style="text-align: center; padding: 1rem; background: #f0fdf4; border-radius: 0.5rem;">
                     <div style="font-size: 1.5rem; font-weight: bold; color: #15803d;">{{ $velocity['to_proposal'] }}</div>
-                    <div style="font-size: 0.8rem; color: #166534;">Hasta propuesta</div>
+                    <div style="font-size: 0.8rem; color: #166534;">To proposal</div>
                 </div>
                 <div style="text-align: center; padding: 1rem; background: #fefce8; border-radius: 0.5rem;">
                     <div style="font-size: 1.5rem; font-weight: bold; color: #a16207;">{{ $velocity['to_close'] }}</div>
-                    <div style="font-size: 0.8rem; color: #854d0e;">Hasta cierre</div>
+                    <div style="font-size: 0.8rem; color: #854d0e;">To close</div>
                 </div>
             </div>
         </div>
 
-        <!-- MEJORA 3: Score vs Close Rate -->
+        <!-- Score vs Close Rate -->
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
             <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">📊 Score vs Close Rate</h3>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
@@ -85,39 +93,39 @@
             </div>
         </div>
 
-        <!-- MEJORA 4: Forecast predictivo -->
+        <!-- Predictive forecast -->
         <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); border-radius: 0.5rem; padding: 1.5rem; color: white; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">📈 Forecast predictivo</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">📈 Predictive forecast</h3>
             <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
                 <div>
-                    <span style="font-size: 0.85rem; opacity: 0.9;">Close rate histórico:</span>
+                    <span style="font-size: 0.85rem; opacity: 0.9;">Historical close rate:</span>
                     <span style="font-weight: bold; font-size: 1.25rem;">{{ $forecast['close_rate'] }}%</span>
                 </div>
                 <div>
-                    <span style="font-size: 0.85rem; opacity: 0.9;">Pipeline actual:</span>
+                    <span style="font-size: 0.85rem; opacity: 0.9;">Current pipeline:</span>
                     <span style="font-weight: bold; font-size: 1.25rem;">${{ number_format($forecast['pipeline'], 0) }}</span>
                 </div>
                 <div>
-                    <span style="font-size: 0.85rem; opacity: 0.9;">Revenue esperado:</span>
+                    <span style="font-size: 0.85rem; opacity: 0.9;">Expected revenue:</span>
                     <span style="font-weight: bold; font-size: 1.5rem;">${{ number_format($forecast['expected'], 0) }}</span>
                 </div>
             </div>
         </div>
 
-        <!-- MEJORA 1: Revenue por fuente (ROI real) -->
+        <!-- Revenue by source (real ROI) -->
         @if($revenueBySource->isNotEmpty())
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">💰 Revenue por fuente (ROI real)</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">💰 Revenue by source (real ROI)</h3>
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
                     <thead>
                         <tr style="border-bottom: 2px solid #e5e7eb;">
-                            <th style="text-align: left; padding: 0.5rem;">Fuente</th>
+                            <th style="text-align: left; padding: 0.5rem;">Source</th>
                             <th style="text-align: right; padding: 0.5rem;">Leads</th>
                             <th style="text-align: right; padding: 0.5rem;">Won</th>
                             <th style="text-align: right; padding: 0.5rem;">Close %</th>
                             <th style="text-align: right; padding: 0.5rem;">Revenue</th>
-                            <th style="text-align: right; padding: 0.5rem;">Ticket prom.</th>
+                            <th style="text-align: right; padding: 0.5rem;">Avg ticket</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -137,10 +145,10 @@
         </div>
         @endif
 
-        <!-- MEJORA 5: Borough profundo -->
+        <!-- Borough deep analysis -->
         @if($boroughDeep->isNotEmpty())
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">🗽 Análisis por borough (NYC)</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">🗽 Analysis by borough (NYC)</h3>
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
                     <thead>
@@ -150,8 +158,8 @@
                             <th style="text-align: right; padding: 0.5rem;">Won</th>
                             <th style="text-align: right; padding: 0.5rem;">Close %</th>
                             <th style="text-align: right; padding: 0.5rem;">Revenue</th>
-                            <th style="text-align: right; padding: 0.5rem;">Ticket prom.</th>
-                            <th style="text-align: right; padding: 0.5rem;">Días cierre</th>
+                            <th style="text-align: right; padding: 0.5rem;">Avg ticket</th>
+                            <th style="text-align: right; padding: 0.5rem;">Days to close</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -172,16 +180,16 @@
         </div>
         @endif
 
-        <!-- Margen por fuente y borough (calculator leads) -->
+        <!-- Expected margin by source and borough (calculator leads) -->
         @if($marginBySource->isNotEmpty() || $marginByBorough->isNotEmpty())
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">📉 Margen esperado (Revenue no es lo importante. Margen sí.)</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">📉 Expected margin (Margin matters more than revenue.)</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
                 @if($marginBySource->isNotEmpty())
                 <div>
-                    <h4 style="font-size: 0.9rem; font-weight: 600; color: #4b5563; margin-bottom: 0.5rem;">Por fuente</h4>
+                    <h4 style="font-size: 0.9rem; font-weight: 600; color: #4b5563; margin-bottom: 0.5rem;">By source</h4>
                     <table style="width: 100%; font-size: 0.8rem;">
-                        <tr style="border-bottom: 1px solid #e5e7eb;"><th style="text-align: left; padding: 0.25rem;">Fuente</th><th style="text-align: right;">Margen</th><th style="text-align: right;">%</th></tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;"><th style="text-align: left; padding: 0.25rem;">Source</th><th style="text-align: right;">Margin</th><th style="text-align: right;">%</th></tr>
                         @foreach($marginBySource as $r)
                         <tr style="border-bottom: 1px solid #f3f4f6;"><td>{{ $r->source }}</td><td style="text-align: right;">${{ number_format($r->total_margin, 0) }}</td><td style="text-align: right;">{{ $r->margin_pct }}%</td></tr>
                         @endforeach
@@ -190,9 +198,9 @@
                 @endif
                 @if($marginByBorough->isNotEmpty())
                 <div>
-                    <h4 style="font-size: 0.9rem; font-weight: 600; color: #4b5563; margin-bottom: 0.5rem;">Por borough (calculadora)</h4>
+                    <h4 style="font-size: 0.9rem; font-weight: 600; color: #4b5563; margin-bottom: 0.5rem;">By borough (calculator)</h4>
                     <table style="width: 100%; font-size: 0.8rem;">
-                        <tr style="border-bottom: 1px solid #e5e7eb;"><th style="text-align: left; padding: 0.25rem;">Borough</th><th style="text-align: right;">Margen</th><th style="text-align: right;">%</th></tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;"><th style="text-align: left; padding: 0.25rem;">Borough</th><th style="text-align: right;">Margin</th><th style="text-align: right;">%</th></tr>
                         @foreach($marginByBorough as $r)
                         <tr style="border-bottom: 1px solid #f3f4f6;"><td>{{ $r->borough === 'nj' ? 'New Jersey' : (\App\Models\Quote::getBoroughs()[$r->borough] ?? $r->borough) }}</td><td style="text-align: right;">${{ number_format($r->total_margin, 0) }}</td><td style="text-align: right;">{{ $r->margin_pct }}%</td></tr>
                         @endforeach
@@ -203,18 +211,18 @@
         </div>
         @endif
 
-        <!-- Métricas derivadas calculadora (landing para ads) -->
+        <!-- Calculator derived metrics (landing for ads) -->
         @if(!empty($calculatorMetrics) && ($calculatorMetrics['total_calculator_leads'] ?? 0) > 0)
         <div style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); border-radius: 0.5rem; padding: 1.5rem; color: white; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">📊 Calculadora — Métricas para Ads</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; margin: 0 0 1rem 0;">📊 Calculator — Metrics for Ads</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
                 <div><span style="font-size: 0.75rem; opacity: 0.9;">Calculator → Quote</span><div style="font-weight: bold; font-size: 1.25rem;">{{ $calculatorMetrics['calculator_to_quote_rate'] ?? 0 }}%</div></div>
                 <div><span style="font-size: 0.75rem; opacity: 0.9;">Quote → Closed</span><div style="font-weight: bold; font-size: 1.25rem;">{{ $calculatorMetrics['calculator_to_closed_rate'] ?? 0 }}%</div></div>
-                <div><span style="font-size: 0.75rem; opacity: 0.9;">Avg. Margen</span><div style="font-weight: bold; font-size: 1.25rem;">${{ number_format($calculatorMetrics['average_margin_calculator'] ?? 0, 0) }}</div></div>
-                <div><span style="font-size: 0.75rem; opacity: 0.9;">Revenue desde calculadora</span><div style="font-weight: bold; font-size: 1.25rem;">${{ number_format($calculatorMetrics['revenue_from_calculator'] ?? 0, 0) }}</div></div>
-                <div><span style="font-size: 0.75rem; opacity: 0.9;">Leads calculadora</span><div style="font-weight: bold; font-size: 1.25rem;">{{ $calculatorMetrics['total_calculator_leads'] ?? 0 }}</div></div>
+                <div><span style="font-size: 0.75rem; opacity: 0.9;">Avg. Margin</span><div style="font-weight: bold; font-size: 1.25rem;">${{ number_format($calculatorMetrics['average_margin_calculator'] ?? 0, 0) }}</div></div>
+                <div><span style="font-size: 0.75rem; opacity: 0.9;">Revenue from calculator</span><div style="font-weight: bold; font-size: 1.25rem;">${{ number_format($calculatorMetrics['revenue_from_calculator'] ?? 0, 0) }}</div></div>
+                <div><span style="font-size: 0.75rem; opacity: 0.9;">Calculator leads</span><div style="font-weight: bold; font-size: 1.25rem;">{{ $calculatorMetrics['total_calculator_leads'] ?? 0 }}</div></div>
             </div>
-            <p style="font-size: 0.75rem; opacity: 0.85; margin-top: 0.75rem; margin-bottom: 0;">Usa la calculadora como landing para tráfico frío (Meta/Google Ads). ROI_ads_to_calculator requiere datos de ad spend externos.</p>
+            <p style="font-size: 0.75rem; opacity: 0.85; margin-top: 0.75rem; margin-bottom: 0;">Use the calculator as landing for cold traffic (Meta/Google Ads). ROI_ads_to_calculator requires external ad spend data.</p>
         </div>
         @endif
 
@@ -226,8 +234,8 @@
                 <div style="background: #fef2f2; border: 2px solid #dc2626; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 3rem; height: 3rem; background: #dc2626; color: white; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">{{ $alerts['new_24h'] }}</div>
                     <div>
-                        <strong style="color: #991b1b;">Leads sin contactar (24h+)</strong>
-                        <p style="margin: 0; font-size: 0.875rem; color: #b91c1c;">Requieren atención</p>
+                        <strong style="color: #991b1b;">Leads not contacted (24h+)</strong>
+                        <p style="margin: 0; font-size: 0.875rem; color: #b91c1c;">Require attention</p>
                     </div>
                 </div>
             </a>
@@ -237,8 +245,8 @@
                 <div style="background: #fffbeb; border: 2px solid #d97706; border-radius: 0.5rem; padding: 1rem; display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 3rem; height: 3rem; background: #d97706; color: white; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">{{ $alerts['proposal_followup'] }}</div>
                     <div>
-                        <strong style="color: #92400e;">Propuestas pendientes follow-up (5d+)</strong>
-                        <p style="margin: 0; font-size: 0.875rem; color: #b45309;">Seguimiento necesario</p>
+                        <strong style="color: #92400e;">Proposals pending follow-up (5d+)</strong>
+                        <p style="margin: 0; font-size: 0.875rem; color: #b45309;">Follow-up needed</p>
                     </div>
                 </div>
             </a>
@@ -291,7 +299,7 @@
         <!-- Pipeline Stats -->
         @if(!empty($pipeline))
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">Pipeline de Leads</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">Lead Pipeline</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 0.75rem;">
                 <div style="text-align: center; padding: 0.75rem; background: #fef3c7; border-radius: 0.5rem;">
                     <div style="font-size: 1.5rem; font-weight: bold; color: #92400e;">{{ $pipeline['new'] ?? 0 }}</div>
@@ -324,7 +332,7 @@
         <!-- Top Leads by Score -->
         @if($topLeads->isNotEmpty())
         <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.5rem; margin-bottom: 1.5rem;">
-            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">Leads prioritarios (por score)</h3>
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: #111827; margin: 0 0 1rem 0;">Priority leads (by score)</h3>
             <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                 @foreach($topLeads as $lead)
                 <a href="{{ route('filament.admin.resources.quotes.edit', ['record' => $lead]) }}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f9fafb; border-radius: 0.5rem; text-decoration: none; color: inherit; border: 1px solid #e5e7eb;">
@@ -352,7 +360,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
             @if($bySource->isNotEmpty())
             <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.25rem;">
-                <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.75rem 0;">Por fuente</h3>
+                <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.75rem 0;">By source</h3>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                     @foreach($bySource as $row)
                     <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
@@ -365,7 +373,7 @@
             @endif
             @if($byBorough->isNotEmpty())
             <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.25rem;">
-                <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.75rem 0;">Por borough</h3>
+                <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.75rem 0;">By borough</h3>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                     @foreach($byBorough as $row)
                     <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
@@ -378,7 +386,7 @@
             @endif
             @if($byService->isNotEmpty())
             <div style="background: white; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; padding: 1.25rem;">
-                <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.75rem 0;">Por servicio</h3>
+                <h3 style="font-size: 1rem; font-weight: 600; color: #111827; margin: 0 0 0.75rem 0;">By service</h3>
                 <div style="display: flex; flex-direction: column; gap: 0.5rem;">
                     @foreach($byService as $row)
                     <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
