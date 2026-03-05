@@ -27,13 +27,13 @@ class FooterSettingsSeeder extends Seeder
             ],
             [
                 'key' => 'footer_email_1',
-                'value' => 'wojtek@bluedraft.org',
+                'value' => 'info@bluedraft.cc',
                 'type' => 'text',
                 'group' => 'footer',
             ],
             [
                 'key' => 'footer_email_2',
-                'value' => 'marcin@bluedraft.org',
+                'value' => 'info@bluedraft.cc',
                 'type' => 'text',
                 'group' => 'footer',
             ],
@@ -64,6 +64,24 @@ class FooterSettingsSeeder extends Seeder
             [
                 'key' => 'footer_copyright',
                 'value' => 'Blue Draft - All Rights Reserved.',
+                'type' => 'text',
+                'group' => 'footer',
+            ],
+            [
+                'key' => 'footer_license',
+                'value' => 'NYC Licensed & Insured',
+                'type' => 'text',
+                'group' => 'footer',
+            ],
+            [
+                'key' => 'footer_insured',
+                'value' => 'Fully insured & bonded',
+                'type' => 'text',
+                'group' => 'footer',
+            ],
+            [
+                'key' => 'footer_certifications',
+                'value' => 'EPA Lead-Safe Certified',
                 'type' => 'text',
                 'group' => 'footer',
             ],

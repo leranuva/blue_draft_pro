@@ -104,8 +104,17 @@ class AboutSettings extends Page implements HasForms
                             ->label('Satisfaction Rate')
                             ->placeholder('100%')
                             ->maxLength(50),
+                        TextInput::make('about_stat_rating')
+                            ->label('Average Rating (e.g. 4.9/5)')
+                            ->placeholder('4.9/5')
+                            ->maxLength(20),
+                        TextInput::make('about_stat_borough')
+                            ->label('Borough Social Proof')
+                            ->placeholder('+127 Renovations in Brooklyn Since 2019')
+                            ->helperText('High-converting stat: projects in a specific borough. Leave empty to hide.')
+                            ->maxLength(100),
                     ])
-                    ->columns(3),
+                    ->columns(2),
                 
                 Section::make('About Image')
                     ->description('Image for the right side of the About section')

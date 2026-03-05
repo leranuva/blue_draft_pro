@@ -18,6 +18,9 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
+    /** Use id for admin routes to avoid null slug issues on shared hosting */
+    protected static ?string $recordRouteKeyName = 'id';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     
     protected static ?string $navigationLabel = 'Projects';

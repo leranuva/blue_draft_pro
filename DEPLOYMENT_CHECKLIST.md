@@ -1,4 +1,8 @@
-# ✅ Checklist de Despliegue - Hostinger
+# ✅ Checklist de Despliegue - Blue Draft
+
+**Nota:** Hostinger shared hosting usa MySQL por defecto. Usa `DB_CONNECTION=mysql` en `.env`. Para PostgreSQL (VPS), usa `DB_CONNECTION=pgsql`.
+
+**Guía detallada:** [docs/DEPLOYMENT_HOSTINGER.md](docs/DEPLOYMENT_HOSTINGER.md) | **Pre-deploy:** [docs/PRE_DEPLOY.md](docs/PRE_DEPLOY.md)
 
 Usa esta checklist para asegurarte de que todo esté listo antes y después del despliegue.
 
@@ -35,16 +39,17 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 - [ ] `APP_KEY` generado o copiado
 
 ### Base de Datos
-- [ ] Base de datos MySQL creada en Hostinger
+- [ ] Base de datos MySQL creada en Hostinger (o PostgreSQL en VPS)
 - [ ] Usuario de base de datos creado con permisos
 - [ ] Credenciales de BD configuradas en `.env`
 - [ ] Migraciones ejecutadas: `php artisan migrate --force`
 - [ ] Seeders ejecutados: `php artisan db:seed --force`
-- [ ] Usuario administrador creado (marcin@bluedraft.org)
+- [ ] Usuario administrador creado (info@bluedraft.cc)
 
 ### Dependencias
 - [ ] Composer instalado en el servidor
 - [ ] Dependencias instaladas: `composer install --optimize-autoloader --no-dev`
+- [ ] (Opcional) Si hay cambios en assets: `npm install && npm run build`
 - [ ] Sin errores en la instalación
 
 ### Configuración del Servidor
@@ -53,6 +58,10 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 - [ ] Permisos de `storage/` configurados (775)
 - [ ] Permisos de `bootstrap/cache/` configurados (775)
 - [ ] Enlace simbólico creado: `php artisan storage:link`
+
+### Cola de trabajos y Cron
+- [ ] **Hostinger shared:** `QUEUE_CONNECTION=sync` en .env (no se necesita queue:work)
+- [ ] Cron configurado: `* * * * * cd /ruta/proyecto && php artisan schedule:run >> /dev/null 2>&1`
 
 ### Optimización
 - [ ] Configuración cacheada: `php artisan config:cache`
@@ -98,12 +107,6 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 - [ ] Gestión de cotizaciones funciona
 - [ ] Cambios se guardan correctamente
 
-### Página de Propuesta
-- [ ] `/proposal` carga correctamente
-- [ ] Navegación en header funciona
-- [ ] Logo se muestra correctamente
-- [ ] Enlaces funcionan
-
 ### Performance
 - [ ] Página carga rápidamente
 - [ ] Assets se cargan correctamente
@@ -113,7 +116,7 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 ### Seguridad
 - [ ] `APP_DEBUG=false` en producción
 - [ ] `.env` no es accesible públicamente
-- [ ] Panel de administración solo accesible con email @bluedraft.org
+- [ ] Panel de administración solo accesible con email @bluedraft.org o @bluedraft.cc
 - [ ] Formularios tienen protección CSRF
 - [ ] reCAPTCHA activo
 
@@ -121,7 +124,7 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 
 ### Panel de Administración
 - **URL**: `https://tudominio.com/system-bd-access`
-- **Email**: `marcin@bluedraft.org`
+- **Email**: `info@bluedraft.cc`
 - **Contraseña**: `BlueDraft2024!`
 
 ### Base de Datos
@@ -161,6 +164,6 @@ Cuando necesites actualizar el sitio:
 ---
 
 **Fecha de despliegue**: _______________  
-**Versión desplegada**: 1.1.0  
+**Versión desplegada**: 1.2.0  
 **Desplegado por**: _______________
 

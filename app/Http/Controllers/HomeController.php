@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\AddLeadToEmailSequence;
 use App\Mail\ContactNotification;
 use App\Mail\QuoteNotification;
 use App\Models\Project;
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $projects = Project::where('is_featured', true)
             ->orWhere(function($query) {
@@ -57,13 +58,33 @@ class HomeController extends Controller
             ->pluck('value', 'key')
             ->toArray();
 
+        // Prefill quote form when coming from cost calculator
+        $quotePrefill = [];
+        if ($request->query('from') === 'calculator') {
+            $quotePrefill = [
+                'service' => $request->query('service', ''),
+                'budget' => $request->query('budget', ''),
+                'budget_min' => $request->query('budget_min', ''),
+                'budget_max' => $request->query('budget_max', ''),
+                'estimated_value' => $request->query('estimated_value', ''),
+                'calc_sqft' => $request->query('calc_sqft', ''),
+                'calc_type' => $request->query('calc_type', ''),
+                'calc_borough' => $request->query('calc_borough', ''),
+                'calc_finish' => $request->query('calc_finish', ''),
+                'calc_version' => $request->query('calc_version', ''),
+                'calculation_hash' => $request->query('calc_hash', ''),
+            ];
+        }
+
         return view('home', [
-            'recaptchaSiteKey' => env('RECAPTCHA_SITE_KEY', ''),
+            'recaptchaSiteKey' => config('services.recaptcha.site_key', ''),
+            'quotePrefill' => $quotePrefill,
             'projects' => $projects,
             'hero' => [
                 'badge' => $heroSettings['hero_badge'] ?? 'Expert Construction',
                 'title_line1' => $heroSettings['hero_title_line1'] ?? 'Solutions You',
                 'title_line2' => $heroSettings['hero_title_line2'] ?? 'Can Trust',
+                'subtitle' => $heroSettings['hero_subtitle'] ?? 'Free Estimates. On-Time Delivery. Guaranteed Quality.',
                 'description' => $heroSettings['hero_description'] ?? 'Reliable construction services for your dream projects. We deliver high-quality results that exceed expectations with integrity, safety, and sustainable practices.',
                 'cta_text' => $heroSettings['hero_cta_text'] ?? 'Get Your Free Quote',
                 'phone' => $heroSettings['hero_phone'] ?? '+13476366128',
@@ -82,6 +103,8 @@ class HomeController extends Controller
                 'stat_years' => $aboutSettings['about_stat_years'] ?? '15+',
                 'stat_projects' => $aboutSettings['about_stat_projects'] ?? '200+',
                 'stat_satisfaction' => $aboutSettings['about_stat_satisfaction'] ?? '100%',
+                'stat_rating' => $aboutSettings['about_stat_rating'] ?? '4.9/5',
+                'stat_borough' => $aboutSettings['about_stat_borough'] ?? null,
                 'image' => $aboutSettings['about_image'] ?? null,
                 'image_text' => $aboutSettings['about_image_text'] ?? 'Quality & Safety',
                 'image_svg_path' => $aboutSettings['about_image_svg_path'] ?? 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
@@ -142,16 +165,18 @@ class HomeController extends Controller
                 'address' => $contactSettings['contact_address'] ?? '358 Amboy St, Brooklyn, NY 11212, USA',
                 'phone' => $contactSettings['contact_phone'] ?? '+1.3476366128',
                 'phone_link' => $contactSettings['contact_phone_link'] ?? '+13476366128',
-                'email' => $contactSettings['contact_email'] ?? 'marcin@bluedraft.org',
+                'email' => $contactSettings['contact_email'] ?? config('mail.admin_notification_email'),
                 'hours' => $contactSettings['contact_hours'] ?? 'Mon - Fri: 8:00 AM - 6:00 PM',
+                'whatsapp' => $contactSettings['contact_whatsapp'] ?? '13476366128',
                 'form_title' => $contactSettings['contact_form_title'] ?? 'Send Us a Message',
                 'map_url' => $contactSettings['contact_map_url'] ?? 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.184133583885!2d-73.94482368459418!3d40.67834397932778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25bae6c5b3b3b%3A0x8b5e5e5e5e5e5e5e!2s358%20Amboy%20St%2C%20Brooklyn%2C%20NY%2011212%2C%20USA!5e0!3m2!1sen!2sus!4v1735123456789!5m2!1sen!2sus',
+                'schedule_url' => $contactSettings['contact_schedule_url'] ?? null,
             ],
             'footer' => [
                 'description' => $footerSettings['footer_description'] ?? 'Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.',
                 'address' => $footerSettings['footer_address'] ?? '358 Amboy St, Brooklyn, NY 11212, USA',
-                'email_1' => $footerSettings['footer_email_1'] ?? 'wojtek@bluedraft.org',
-                'email_2' => $footerSettings['footer_email_2'] ?? 'marcin@bluedraft.org',
+                'email_1' => $footerSettings['footer_email_1'] ?? config('mail.admin_notification_email'),
+                'email_2' => $footerSettings['footer_email_2'] ?? config('mail.admin_notification_email'),
                 'phone' => $footerSettings['footer_phone'] ?? '+1.3476366128',
                 'linkedin_url' => $footerSettings['footer_linkedin_url'] ?? 'https://www.linkedin.com/company/bluedraft',
                 'instagram_url' => $footerSettings['footer_instagram_url'] ?? 'https://www.instagram.com/bluedraft',
@@ -166,8 +191,13 @@ class HomeController extends Controller
         $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'g-recaptcha-response' => 'required|string',
         ];
+
+        if (config('services.recaptcha.secret')) {
+            $rules['g-recaptcha-response'] = 'required|string';
+        } else {
+            $rules['g-recaptcha-response'] = 'nullable|string';
+        }
         
         // Si es una solicitud de cotización, las reglas son diferentes
         if ($request->has('quote_request')) {
@@ -176,7 +206,7 @@ class HomeController extends Controller
             $rules['photos.*'] = 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'; // 10MB max
         } else {
             $rules['service'] = 'required|string';
-            $rules['budget'] = 'required|string';
+            $rules['budget'] = 'nullable|string';
             $rules['phone'] = 'nullable|string|max:20';
             $rules['address'] = 'nullable|string|max:500';
             $rules['message'] = 'nullable|string|max:2000';
@@ -184,39 +214,49 @@ class HomeController extends Controller
         
         $validated = $request->validate($rules);
 
-        // Verificar reCAPTCHA
-        $recaptchaSecret = env('RECAPTCHA_SECRET_KEY');
-        $recaptchaResponse = $request->input('g-recaptcha-response');
+        // Verificar reCAPTCHA solo si está configurado
+        $recaptchaSecret = config('services.recaptcha.secret');
+        if ($recaptchaSecret) {
+            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+                'secret' => $recaptchaSecret,
+                'response' => $validated['g-recaptcha-response'] ?? '',
+                'remoteip' => $request->ip(),
+            ]);
 
-        if (!$recaptchaSecret) {
-            return back()->withErrors(['recaptcha' => 'reCAPTCHA no está configurado.'])->withInput();
-        }
+            $result = $response->json();
 
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret' => $recaptchaSecret,
-            'response' => $recaptchaResponse,
-            'remoteip' => $request->ip(),
-        ]);
-
-        $result = $response->json();
-
-        if (!$result['success']) {
-            return back()->withErrors(['recaptcha' => 'La verificación de reCAPTCHA falló. Por favor, inténtalo de nuevo.'])->withInput();
+            if (!$result['success'] ?? false) {
+                return back()->withErrors(['recaptcha' => 'La verificación de reCAPTCHA falló. Por favor, inténtalo de nuevo.'])->withInput();
+            }
         }
 
         // Guardar en la base de datos
         if ($request->has('quote_request')) {
-            // Crear la cotización
-            $quote = Quote::create([
+            $tracking = Quote::extractTrackingFromRequest($request);
+            $hasPhotos = $request->hasFile('photos');
+            $address = $request->input('address');
+            $quote = Quote::create(array_merge([
                 'client_name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $request->input('phone'),
                 'address' => $request->input('address'),
                 'service_type' => $validated['service'],
-                'estimated_budget' => null, // No se captura en el formulario rápido
+                'estimated_budget' => null,
                 'message' => $validated['message'] ?? null,
                 'status' => 'pending',
-            ]);
+                'stage' => Quote::STAGE_NEW,
+                'is_partial' => false,
+                'step' => 2,
+                'borough' => Quote::inferBoroughFromAddress($address),
+                'lead_score' => Quote::calculateLeadScore([
+                    'service_type' => $validated['service'],
+                    'address' => $address,
+                    'borough' => Quote::inferBoroughFromAddress($address),
+                ], $hasPhotos),
+                'source_url' => $request->header('Referer'),
+                'user_agent' => $request->userAgent(),
+                'ip_address' => $request->ip(),
+            ], $tracking));
 
             // Procesar y guardar fotos si existen
             if ($request->hasFile('photos')) {
@@ -238,7 +278,7 @@ class HomeController extends Controller
             
             // Enviar notificación por correo
             try {
-                Mail::to('marcin@bluedraft.org')->send(new QuoteNotification($quote));
+                Mail::to(config('mail.admin_notification_email'))->send(new QuoteNotification($quote));
                 Log::info('Quote notification email sent', [
                     'quote_id' => $quote->id,
                     'email' => $quote->email,
@@ -256,10 +296,12 @@ class HomeController extends Controller
                 'attachments_count' => $quote->attachments()->count(),
             ]);
 
+            AddLeadToEmailSequence::dispatch($quote);
+
             return back()->with('success', '¡Gracias por tu solicitud de cotización! Revisaremos tus fotos y te contactaremos pronto con una estimación.');
         } else {
-            // Formulario multi-paso de contacto
-            $quote = Quote::create([
+            $tracking = Quote::extractTrackingFromRequest($request);
+            $quote = Quote::create(array_merge([
                 'client_name' => $validated['name'],
                 'email' => $validated['email'],
                 'phone' => $validated['phone'] ?? null,
@@ -268,11 +310,26 @@ class HomeController extends Controller
                 'estimated_budget' => $validated['budget'] ?? null,
                 'message' => $validated['message'] ?? null,
                 'status' => 'pending',
-            ]);
+                'stage' => Quote::STAGE_NEW,
+                'is_partial' => false,
+                'step' => 2,
+                'borough' => Quote::inferBoroughFromAddress($validated['address'] ?? null),
+                'lead_score' => Quote::calculateLeadScore([
+                    'service_type' => $validated['service'],
+                    'estimated_budget' => $validated['budget'] ?? null,
+                    'message' => $validated['message'] ?? null,
+                    'address' => $validated['address'] ?? null,
+                    'phone' => $validated['phone'] ?? null,
+                    'borough' => Quote::inferBoroughFromAddress($validated['address'] ?? null),
+                ], false),
+                'source_url' => $request->header('Referer'),
+                'user_agent' => $request->userAgent(),
+                'ip_address' => $request->ip(),
+            ], $tracking));
 
             // Enviar notificación por correo
             try {
-                Mail::to('marcin@bluedraft.org')->send(new ContactNotification($quote));
+                Mail::to(config('mail.admin_notification_email'))->send(new ContactNotification($quote));
                 Log::info('Contact notification email sent', [
                     'quote_id' => $quote->id,
                     'email' => $quote->email,
@@ -293,10 +350,5 @@ class HomeController extends Controller
 
             return back()->with('success', '¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
         }
-    }
-
-    public function proposal()
-    {
-        return view('proposal');
     }
 }

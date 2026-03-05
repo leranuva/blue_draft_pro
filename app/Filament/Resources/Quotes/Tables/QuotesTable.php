@@ -33,6 +33,50 @@ class QuotesTable
                 TextColumn::make('estimated_budget')
                     ->searchable()
                     ->label('Budget'),
+                TextColumn::make('estimated_value')
+                    ->label('Est. Value')
+                    ->money('USD')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('closed_value')
+                    ->label('Closed Value')
+                    ->money('USD')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('borough')
+                    ->label('Borough')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => $state ? (\App\Models\Quote::getBoroughs()[$state] ?? $state) : '—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('lead_score')
+                    ->label('Temp')
+                    ->badge()
+                    ->formatStateUsing(fn (int $state): string => $state . '/12 ' . (\App\Models\Quote::getScoreLabel($state)))
+                    ->color(fn (int $state): string => \App\Models\Quote::getScoreColor($state))
+                    ->sortable()
+                    ->tooltip('Cold 0-4, Warm 5-8, Hot 9-12'),
+                TextColumn::make('is_partial')
+                    ->label('Partial')
+                    ->badge()
+                    ->color(fn (bool $state): string => $state ? 'warning' : 'gray')
+                    ->formatStateUsing(fn (bool $state): string => $state ? 'Yes (Step 1)' : 'Complete')
+                    ->sortable(),
+                TextColumn::make('abandoned_at')
+                    ->label('Abandoned')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('stage')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'new' => 'warning',
+                        'contacted' => 'info',
+                        'qualified' => 'info',
+                        'proposal_sent' => 'primary',
+                        'won' => 'success',
+                        'lost' => 'danger',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => \App\Models\Quote::getStages()[$state] ?? $state)
+                    ->sortable(),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
@@ -41,7 +85,8 @@ class QuotesTable
                         'completed' => 'success',
                         default => 'gray',
                     })
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('attachments_count')
                     ->counts('attachments')
                     ->label('Photos')
@@ -58,6 +103,10 @@ class QuotesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                \Filament\Tables\Filters\SelectFilter::make('stage')
+                    ->options(\App\Models\Quote::getStages()),
+                \Filament\Tables\Filters\SelectFilter::make('borough')
+                    ->options(\App\Models\Quote::getBoroughs()),
                 \Filament\Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'pending' => 'Pending',
@@ -72,8 +121,19 @@ class QuotesTable
                         'renovation' => 'Renovation',
                         'other' => 'Other',
                     ]),
+                \Filament\Tables\Filters\TernaryFilter::make('is_partial')
+                    ->label('Partial leads (Step 1 only)')
+                    ->placeholder('All')
+                    ->trueLabel('Partial only')
+                    ->falseLabel('Complete only'),
+                \Filament\Tables\Filters\TernaryFilter::make('abandoned_at')
+                    ->label('Abandoned')
+                    ->placeholder('All')
+                    ->trueLabel('Abandoned')
+                    ->falseLabel('Not abandoned')
+                    ->nullable(),
             ])
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('lead_score', 'desc')
             ->recordActions([
                 \Filament\Actions\ViewAction::make(),
                 EditAction::make(),

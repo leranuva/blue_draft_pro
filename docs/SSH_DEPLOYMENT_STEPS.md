@@ -145,7 +145,7 @@ php artisan db:seed --force
 ```
 
 Esto creará:
-- ✅ Usuario administrador (marcin@bluedraft.org / BlueDraft2024!)
+- ✅ Usuario administrador (info@bluedraft.cc)
 - ✅ Configuraciones iniciales del sitio
 - ✅ Proyectos de ejemplo
 
@@ -217,7 +217,7 @@ Visita:
 - `https://leranuva.com/system-bd-access`
 
 Credenciales:
-- Email: `marcin@bluedraft.org`
+- Email: `info@bluedraft.cc`
 - Contraseña: `BlueDraft2024!`
 
 ## 🔍 Comandos de Verificación

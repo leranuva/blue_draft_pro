@@ -62,6 +62,18 @@ class AboutSettingsSeeder extends Seeder
                 'group' => 'about',
             ],
             [
+                'key' => 'about_stat_rating',
+                'value' => '4.9/5',
+                'type' => 'text',
+                'group' => 'about',
+            ],
+            [
+                'key' => 'about_stat_borough',
+                'value' => '+127 Renovations in Brooklyn Since 2019',
+                'type' => 'text',
+                'group' => 'about',
+            ],
+            [
                 'key' => 'about_image',
                 'value' => null,
                 'type' => 'image',

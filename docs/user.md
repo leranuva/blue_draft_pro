@@ -7,7 +7,7 @@
 | Campo | Valor |
 |-------|-------|
 | **Nombre** | Blue Draft Admin |
-| **Email** | `marcin@bluedraft.org` |
+| **Email** | `info@bluedraft.cc` |
 | **Contraseña** | `BlueDraft2024!` |
 | **Panel de Administración** | `/system-bd-access` |
 
@@ -63,7 +63,7 @@ use Illuminate\Support\Facades\Hash;
 
 $user = User::create([
     'name' => 'Blue Draft Admin',
-    'email' => 'marcin@bluedraft.org',
+    'email' => 'info@bluedraft.cc',
     'password' => Hash::make('BlueDraft2024!'),
     'email_verified_at' => now(),
 ]);
@@ -172,12 +172,11 @@ class User extends Authenticatable implements FilamentUser
 
 ### Emails de Contacto del Sitio
 
-- `wojtek@bluedraft.org` - Email principal del footer
-- `marcin@bluedraft.org` - Email secundario del footer y usuario administrador
+- `info@bluedraft.cc` - Email principal (footer, contacto, notificaciones, usuario administrador)
 
 ### Notificaciones
 
-Las notificaciones de formularios de contacto y cotizaciones se envían automáticamente a `marcin@bluedraft.org`.
+Las notificaciones de formularios de contacto y cotizaciones se envían automáticamente a `info@bluedraft.cc` (configurable vía `ADMIN_NOTIFICATION_EMAIL`).
 
 ## 🛠️ Comandos Útiles
 
@@ -190,7 +189,7 @@ php artisan tinker
 ```php
 use App\Models\User;
 
-$user = User::where('email', 'marcin@bluedraft.org')->first();
+$user = User::where('email', 'info@bluedraft.cc')->first();
 echo $user->name;
 ```
 
@@ -204,7 +203,7 @@ php artisan tinker
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
-$user = User::where('email', 'marcin@bluedraft.org')->first();
+$user = User::where('email', 'info@bluedraft.cc')->first();
 $user->password = Hash::make('NuevaContraseñaSegura123!');
 $user->save();
 ```

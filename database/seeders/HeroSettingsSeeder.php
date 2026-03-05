@@ -32,6 +32,12 @@ class HeroSettingsSeeder extends Seeder
                 'group' => 'hero',
             ],
             [
+                'key' => 'hero_subtitle',
+                'value' => 'Free Estimates. On-Time Delivery. Guaranteed Quality.',
+                'type' => 'text',
+                'group' => 'hero',
+            ],
+            [
                 'key' => 'hero_description',
                 'value' => 'Reliable construction services for your dream projects. We deliver high-quality results that exceed expectations with integrity, safety, and sustainable practices.',
                 'type' => 'textarea',

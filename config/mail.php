@@ -16,6 +16,8 @@ return [
 
     'default' => env('MAIL_MAILER', 'log'),
 
+    'admin_notification_email' => env('ADMIN_NOTIFICATION_EMAIL', 'info@bluedraft.cc'),
+
     /*
     |--------------------------------------------------------------------------
     | Mailer Configurations

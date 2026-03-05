@@ -53,7 +53,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        // Solo permitimos el acceso a correos específicos de la empresa
-        return str_ends_with($this->email, '@bluedraft.org');
+        // Solo permitimos el acceso a correos de la empresa (.org y .cc)
+        return str_ends_with($this->email, '@bluedraft.org') || str_ends_with($this->email, '@bluedraft.cc');
     }
 }

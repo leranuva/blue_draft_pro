@@ -70,6 +70,11 @@ class HeroSettings extends Page implements HasForms
                             ->label('Title Line 2')
                             ->placeholder('Can Trust')
                             ->maxLength(255),
+                        TextInput::make('hero_subtitle')
+                            ->label('Subtitle (direct value prop)')
+                            ->placeholder('Free Estimates. On-Time Delivery. Guaranteed Quality.')
+                            ->helperText('Short punchy line: what you do, for whom. E.g. "Premium Construction in NYC"')
+                            ->maxLength(255),
                         Textarea::make('hero_description')
                             ->label('Description')
                             ->rows(3)

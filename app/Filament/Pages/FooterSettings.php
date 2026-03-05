@@ -73,12 +73,12 @@ class FooterSettings extends Page implements HasForms
                             ->maxLength(255),
                         TextInput::make('footer_email_1')
                             ->label('Email 1')
-                            ->placeholder('wojtek@bluedraft.org')
+                            ->placeholder('info@bluedraft.cc')
                             ->email()
                             ->maxLength(255),
                         TextInput::make('footer_email_2')
                             ->label('Email 2')
-                            ->placeholder('marcin@bluedraft.org')
+                            ->placeholder('info@bluedraft.cc')
                             ->email()
                             ->maxLength(255),
                         TextInput::make('footer_phone')
@@ -105,6 +105,27 @@ class FooterSettings extends Page implements HasForms
                             ->label('Facebook URL')
                             ->placeholder('https://www.facebook.com/bluedraft')
                             ->url()
+                            ->maxLength(255),
+                    ])
+                    ->columns(1),
+                
+                Section::make('Authority & Trust')
+                    ->description('License, insurance, certifications - increases conversion 30-40%')
+                    ->schema([
+                        TextInput::make('footer_license')
+                            ->label('License Number')
+                            ->placeholder('NYC License #12345')
+                            ->helperText('NYC contractor license. Leave empty to hide.')
+                            ->maxLength(100),
+                        TextInput::make('footer_insured')
+                            ->label('Insurance')
+                            ->placeholder('Fully insured & bonded')
+                            ->helperText('e.g. Fully insured & bonded')
+                            ->maxLength(100),
+                        TextInput::make('footer_certifications')
+                            ->label('Certifications')
+                            ->placeholder('EPA Lead-Safe, OSHA')
+                            ->helperText('Comma-separated. Leave empty to hide.')
                             ->maxLength(255),
                     ])
                     ->columns(1),

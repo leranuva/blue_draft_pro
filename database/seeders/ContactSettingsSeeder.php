@@ -51,13 +51,19 @@ class ContactSettingsSeeder extends Seeder
             ],
             [
                 'key' => 'contact_email',
-                'value' => 'marcin@bluedraft.org',
+                'value' => 'info@bluedraft.cc',
                 'type' => 'text',
                 'group' => 'contact',
             ],
             [
                 'key' => 'contact_hours',
                 'value' => 'Mon - Fri: 8:00 AM - 6:00 PM',
+                'type' => 'text',
+                'group' => 'contact',
+            ],
+            [
+                'key' => 'contact_whatsapp',
+                'value' => '13476366128',
                 'type' => 'text',
                 'group' => 'contact',
             ],
@@ -71,6 +77,12 @@ class ContactSettingsSeeder extends Seeder
                 'key' => 'contact_map_url',
                 'value' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.184133583885!2d-73.94482368459418!3d40.67834397932778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25bae6c5b3b3b%3A0x8b5e5e5e5e5e5e5e!2s358%20Amboy%20St%2C%20Brooklyn%2C%20NY%2011212%2C%20USA!5e0!3m2!1sen!2sus!4v1735123456789!5m2!1sen!2sus',
                 'type' => 'textarea',
+                'group' => 'contact',
+            ],
+            [
+                'key' => 'contact_schedule_url',
+                'value' => '',
+                'type' => 'text',
                 'group' => 'contact',
             ],
         ];

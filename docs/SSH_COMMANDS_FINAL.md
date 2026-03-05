@@ -71,7 +71,7 @@ ls -la public/storage
 
 # Verificar que el usuario admin se creó
 php artisan tinker
->>> \App\Models\User::where('email', 'marcin@bluedraft.org')->count()
+>>> \App\Models\User::where('email', 'info@bluedraft.cc')->count()
 # Debería mostrar: 1
 >>> exit
 ```
@@ -110,7 +110,7 @@ Después de ejecutar todos los comandos:
    - Todas las secciones visibles
 
 2. **Panel de Administración**: `https://leranuva.com/system-bd-access`
-   - Email: `marcin@bluedraft.org`
+   - Email: `info@bluedraft.cc`
    - Contraseña: `BlueDraft2024!`
 
 ## 🐛 Si Hay Problemas

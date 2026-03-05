@@ -20,7 +20,7 @@ class ProjectsTable
                     ->label('Image')
                     ->disk('public')
                     ->circular()
-                    ->defaultImageUrl(url('/images/placeholder.jpg')),
+                    ->defaultImageUrl(asset('images/logo.svg')),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable()

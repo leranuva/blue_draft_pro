@@ -6,7 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <title>@yield('title', 'Blue Draft - Expert Construction Solutions')</title>
-    <meta name="description" content="Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.">
+    <meta name="description" content="@yield('meta_description', 'Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.')">
+    @stack('meta')
+    <link rel="sitemap" type="application/xml" href="{{ route('sitemap') }}">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -31,36 +33,61 @@
         })();
     </script>
     
-    <!-- Styles -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Styles & Scripts: production build o Vite dev -->
+    @php
+        $manifestPath = public_path('build/manifest.json');
+        $useProductionAssets = file_exists($manifestPath);
+    @endphp
+    @if($useProductionAssets)
+        @php
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+        @endphp
+        @if(isset($manifest['resources/css/app.css']['file']))
+            <link rel="stylesheet" href="{{ asset('build/' . $manifest['resources/css/app.css']['file']) }}">
+        @endif
+        @if(isset($manifest['resources/js/app.js']['file']))
+            <script type="module" src="{{ asset('build/' . $manifest['resources/js/app.js']['file']) }}"></script>
+        @endif
+    @else
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endif
     
     @stack('styles')
+    @stack('tracking_data')
+    @include('components.tracking')
+    @includeWhen(isset($contact), 'components.schema-local-business')
+    @stack('schema')
     
     <!-- Google reCAPTCHA -->
-    @if(env('RECAPTCHA_SITE_KEY'))
+    @if(config('services.recaptcha.site_key'))
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     @endif
 </head>
 <body class="antialiased bg-white dark:bg-gray-900 text-[#003366] dark:text-gray-100 font-sans transition-colors duration-300">
+    @if(config('tracking.gtm_id'))
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ config('tracking.gtm_id') }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    @endif
     <!-- Navigation - Minimalist with Enhanced Glassmorphism -->
     <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-[#CCCC99]/20 dark:border-gray-700/30 shadow-sm" x-data="{ scrolled: false, mobileMenuOpen: false }" @@scroll.window="scrolled = window.scrollY > 20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center space-x-3 group">
-                        <img src="{{ asset('images/logo-original.png') }}" alt="Blue Draft Logo" class="h-12 w-auto group-hover:opacity-80 transition-opacity">
+                        <img src="{{ asset('images/logo-original.png') }}" alt="Blue Draft Logo" class="h-12 w-auto group-hover:opacity-80 transition-opacity" onerror="this.onerror=null; this.src='{{ asset('images/logo.svg') }}';">
                     </a>
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-6">
-                    <a href="#home" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Home</a>
-                    <a href="#about" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">About</a>
-                    <a href="#projects" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Projects</a>
-                    <a href="#testimonials" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Testimonials</a>
-                    <a href="#quote" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Quote</a>
-                    <a href="#contact" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Contact</a>
+                    <a href="{{ route('home') }}#home" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Home</a>
+                    <a href="{{ route('home') }}#about" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">About</a>
+                    <a href="{{ route('home') }}#projects" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Projects</a>
+                    <a href="{{ route('home') }}#services" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Services</a>
+                    <a href="{{ route('home') }}#testimonials" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Testimonials</a>
+                    <a href="{{ route('blog.index') }}" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Blog</a>
+                    <a href="{{ route('home') }}#contact" class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white transition-colors font-medium text-sm uppercase tracking-wider">Contact</a>
                     
-                    <a href="#contact" class="bg-[#003366] dark:bg-[#336699] text-white px-6 py-2.5 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-sm">
+                    <a href="{{ route('home') }}#quote" class="bg-[#003366] dark:bg-[#336699] text-white px-6 py-2.5 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-sm">
                         Get Free Quote
                     </a>
                 </div>
@@ -107,7 +134,7 @@
              class="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/98 dark:bg-gray-900/98 backdrop-blur-xl border-b border-[#CCCC99]/30 dark:border-gray-700/30 shadow-2xl"
              style="display: none;">
             <div class="px-6 py-8 space-y-1">
-                <a href="#home" 
+                <a href="{{ route('home') }}#home" 
                    @@click="mobileMenuOpen = false"
                    class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
                     <span class="flex items-center">
@@ -115,7 +142,7 @@
                         Home
                     </span>
                 </a>
-                <a href="#about" 
+                <a href="{{ route('home') }}#about" 
                    @@click="mobileMenuOpen = false"
                    class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
                     <span class="flex items-center">
@@ -123,7 +150,7 @@
                         About
                     </span>
                 </a>
-                <a href="#projects" 
+                <a href="{{ route('home') }}#projects" 
                    @@click="mobileMenuOpen = false"
                    class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
                     <span class="flex items-center">
@@ -131,7 +158,15 @@
                         Projects
                     </span>
                 </a>
-                <a href="#testimonials" 
+                <a href="{{ route('home') }}#services" 
+                   @@click="mobileMenuOpen = false"
+                   class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
+                    <span class="flex items-center">
+                        <span class="w-1.5 h-1.5 bg-[#336699] dark:bg-[#4a90e2] rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                        Services
+                    </span>
+                </a>
+                <a href="{{ route('home') }}#testimonials" 
                    @@click="mobileMenuOpen = false"
                    class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
                     <span class="flex items-center">
@@ -139,15 +174,15 @@
                         Testimonials
                     </span>
                 </a>
-                <a href="#quote" 
+                <a href="{{ route('blog.index') }}" 
                    @@click="mobileMenuOpen = false"
                    class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
                     <span class="flex items-center">
                         <span class="w-1.5 h-1.5 bg-[#336699] dark:bg-[#4a90e2] rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                        Quote
+                        Blog
                     </span>
                 </a>
-                <a href="#contact" 
+                <a href="{{ route('home') }}#contact" 
                    @@click="mobileMenuOpen = false"
                    class="mobile-menu-item block px-4 py-3 text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white hover:bg-[#003366]/5 dark:hover:bg-[#336699]/10 rounded-lg transition-all duration-300 font-medium text-sm uppercase tracking-wider transform hover:translate-x-2">
                     <span class="flex items-center">
@@ -157,7 +192,7 @@
                 </a>
                 
                 <div class="pt-4 mt-4 border-t border-[#CCCC99]/30 dark:border-gray-700/30">
-                    <a href="#contact" 
+                    <a href="{{ route('home') }}#quote" 
                        @@click="mobileMenuOpen = false"
                        class="mobile-menu-item block bg-gradient-to-r from-[#003366] to-[#336699] dark:from-[#336699] dark:to-[#4a90e2] text-white px-6 py-3.5 rounded-lg hover:from-[#004080] hover:to-[#4a90e2] dark:hover:from-[#4a90e2] dark:hover:to-[#5ba0f2] transition-all duration-300 text-center font-medium text-sm shadow-lg hover:shadow-xl transform hover:scale-105">
                         Get Free Quote
@@ -225,7 +260,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div>
-                    <img src="{{ asset('images/logo-original.png') }}" alt="Blue Draft" class="h-16 mb-4 opacity-90">
+                    <img src="{{ asset('images/logo-original.png') }}" alt="Blue Draft" class="h-16 mb-4 opacity-90" onerror="this.onerror=null; this.src='{{ asset('images/logo.svg') }}';">
                     <p class="text-[#CCCC99] leading-relaxed mb-6">{{ $footer['description'] ?? 'Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.' }}</p>
                     
                     <!-- Social Media Links -->
@@ -256,10 +291,10 @@
                     <ul class="space-y-3 text-[#CCCC99] dark:text-gray-400">
                         <li>{{ $footer['address'] ?? '358 Amboy St, Brooklyn, NY 11212, USA' }}</li>
                         <li>
-                            <a href="mailto:{{ $footer['email_1'] ?? 'wojtek@bluedraft.org' }}" class="hover:text-white dark:hover:text-gray-200 transition-colors">{{ $footer['email_1'] ?? 'wojtek@bluedraft.org' }}</a>
+                            <a href="mailto:{{ $footer['email_1'] ?? config('mail.admin_notification_email') }}" class="hover:text-white dark:hover:text-gray-200 transition-colors">{{ $footer['email_1'] ?? config('mail.admin_notification_email') }}</a>
                         </li>
                         <li>
-                            <a href="mailto:{{ $footer['email_2'] ?? 'marcin@bluedraft.org' }}" class="hover:text-white dark:hover:text-gray-200 transition-colors">{{ $footer['email_2'] ?? 'marcin@bluedraft.org' }}</a>
+                            <a href="mailto:{{ $footer['email_2'] ?? config('mail.admin_notification_email') }}" class="hover:text-white dark:hover:text-gray-200 transition-colors">{{ $footer['email_2'] ?? config('mail.admin_notification_email') }}</a>
                         </li>
                         <li>
                             <a href="tel:{{ str_replace(['.', ' ', '-'], '', $footer['phone'] ?? '+1.3476366128') }}" class="hover:text-white dark:hover:text-gray-200 transition-colors">{{ $footer['phone'] ?? '+1.3476366128' }}</a>
@@ -273,15 +308,35 @@
                         <li><a href="{{ route('home') }}#home" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Home</a></li>
                         <li><a href="{{ route('home') }}#about" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">About</a></li>
                         <li><a href="{{ route('home') }}#projects" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Projects</a></li>
+                        <li><a href="{{ route('home') }}#services" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Services</a></li>
                         <li><a href="{{ route('home') }}#testimonials" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Testimonials</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Blog</a></li>
                         <li><a href="{{ route('home') }}#quote" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Get Quote</a></li>
                         <li><a href="{{ route('home') }}#contact" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Contact</a></li>
-                        <li><a href="{{ route('proposal') }}" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider font-semibold">📋 Project Proposal</a></li>
+                        <li><a href="{{ route('pillar.nyc') }}" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Construction Company NYC</a></li>
+                        @foreach(config('pillar_cities.cities', []) as $slug => $cityConfig)
+                        <li><a href="{{ route('pillar.city', $slug) }}" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Construction Company {{ $cityConfig['name'] ?? ucfirst($slug) }}</a></li>
+                        @endforeach
+                        <li><a href="{{ route('lead-magnet.show') }}" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Free Renovation Guide</a></li>
+                        <li><a href="{{ route('cost-calculator') }}" class="text-[#CCCC99] dark:text-gray-400 hover:text-white dark:hover:text-gray-200 transition-colors text-sm uppercase tracking-wider">Cost Calculator</a></li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-[#336699]/30 dark:border-gray-700/50 mt-12 pt-8 text-center text-[#CCCC99] dark:text-gray-400 text-sm">
+            @if(!empty($footer['license']) || !empty($footer['insured']) || !empty($footer['certifications']))
+            <div class="border-t border-[#336699]/30 dark:border-gray-700/50 mt-12 pt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[#CCCC99] dark:text-gray-400 text-sm">
+                @if(!empty($footer['license']))
+                <span>License: {{ $footer['license'] }}</span>
+                @endif
+                @if(!empty($footer['insured']))
+                <span>{{ $footer['insured'] }}</span>
+                @endif
+                @if(!empty($footer['certifications']))
+                <span>{{ $footer['certifications'] }}</span>
+                @endif
+            </div>
+            @endif
+            <div class="border-t border-[#336699]/30 dark:border-gray-700/50 mt-6 pt-8 text-center text-[#CCCC99] dark:text-gray-400 text-sm">
                 <p>&copy; {{ date('Y') }} {{ $footer['copyright'] ?? 'Blue Draft - All Rights Reserved.' }}</p>
             </div>
         </div>
@@ -289,12 +344,28 @@
     
     @stack('scripts')
     
-    <!-- Floating Message Widget -->
+    <!-- Fixed CTA: Get Free Estimate (mobile sticky bar) -->
+    @php $hero = $hero ?? []; @endphp
+    <div class="fixed bottom-0 left-0 right-0 z-[9998] md:hidden bg-[#003366] dark:bg-[#336699] py-3 px-4 shadow-lg">
+        <a href="#quote" class="flex items-center justify-center w-full bg-white text-[#003366] py-3 rounded-lg font-semibold text-sm uppercase tracking-wider">
+            {{ $hero['cta_text'] ?? 'Get Free Estimate' }}
+        </a>
+    </div>
+    <div class="h-16 md:hidden"></div>
+    
+    <!-- WhatsApp Floating Button -->
+    @php $contact = $contact ?? []; $whatsapp = $contact['whatsapp'] ?? '13476366128'; @endphp
+    <a href="https://wa.me/{{ $whatsapp }}" target="_blank" rel="noopener noreferrer" 
+       class="fixed bottom-24 right-6 z-[9999] w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2"
+       aria-label="Chat on WhatsApp">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+    
+    <!-- Floating Message Widget / Get Free Estimate -->
     <div class="fixed bottom-6 right-6 z-[9999]" x-data="{ open: false }" style="position: fixed !important; bottom: 24px !important; right: 24px !important; z-index: 99999 !important;">
-        <!-- Chat Widget Button -->
+        <!-- CTA Button - Desktop shows panel -->
         <button type="button" @@click="open = !open" 
-                class="relative bg-[#003366] text-white w-16 h-16 rounded-full shadow-2xl hover:bg-[#004080] transition-all duration-300 flex items-center justify-center group hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#336699] focus:ring-offset-2"
-                style="display: flex !important; visibility: visible !important;">
+                class="relative bg-[#003366] text-white w-16 h-16 rounded-full shadow-2xl hover:bg-[#004080] transition-all duration-300 items-center justify-center group hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#336699] focus:ring-offset-2 hidden md:flex">
             <!-- Chat Icon (visible when closed) -->
             <svg x-show="!open" 
                  class="w-7 h-7 transition-transform group-hover:scale-110" 
@@ -365,11 +436,11 @@
                         </svg>
                         +1.3476366128
                     </a>
-                    <a href="mailto:marcin@bluedraft.org" class="flex items-center text-sm text-gray-700 hover:text-[#336699] transition-colors">
+                    <a href="mailto:{{ config('mail.admin_notification_email') }}" class="flex items-center text-sm text-gray-700 hover:text-[#336699] transition-colors">
                         <svg class="w-4 h-4 mr-2 text-[#336699]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
-                        marcin@bluedraft.org
+                        {{ config('mail.admin_notification_email') }}
                     </a>
                 </div>
                 

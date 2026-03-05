@@ -91,13 +91,24 @@ class ContactSettings extends Page implements HasForms
                             ->maxLength(255),
                         TextInput::make('contact_email')
                             ->label('Email Address')
-                            ->placeholder('marcin@bluedraft.org')
+                            ->placeholder('info@bluedraft.cc')
                             ->email()
                             ->maxLength(255),
                         TextInput::make('contact_hours')
                             ->label('Business Hours')
                             ->placeholder('Mon - Fri: 8:00 AM - 6:00 PM')
                             ->maxLength(255),
+                        TextInput::make('contact_whatsapp')
+                            ->label('WhatsApp Number')
+                            ->placeholder('13476366128')
+                            ->helperText('Number with country code, no + or spaces (e.g. 13476366128 for US)')
+                            ->maxLength(20),
+                        TextInput::make('contact_schedule_url')
+                            ->label('Schedule a Call URL')
+                            ->placeholder('https://calendly.com/your-link')
+                            ->url()
+                            ->helperText('Calendly or booking link. Shown as "Schedule a Call Instead" in quote form. Leave empty to use phone.')
+                            ->maxLength(500),
                     ])
                     ->columns(2),
                 

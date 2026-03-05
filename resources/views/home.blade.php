@@ -33,10 +33,15 @@
                     <div class="inline-block mb-6">
                         <span class="text-sm font-medium text-white uppercase tracking-wider">{{ $hero['badge'] }}</span>
                     </div>
-                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-6 leading-tight">
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 leading-tight">
                         {{ $hero['title_line1'] }}<br>{{ $hero['title_line2'] }}
                     </h1>
-                    <p class="text-xl text-white/90 mb-8 leading-relaxed max-w-xl">
+                    @if(!empty($hero['subtitle']))
+                    <p class="text-xl md:text-2xl text-white/95 font-medium mb-4">
+                        {{ $hero['subtitle'] }}
+                    </p>
+                    @endif
+                    <p class="text-lg text-white/90 mb-8 leading-relaxed max-w-xl">
                         {{ $hero['description'] }}
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
@@ -120,13 +125,18 @@
                             <div class="text-sm text-gray-500 dark:text-gray-400">Satisfaction</div>
                         </div>
                     </div>
+                    @if(!empty($about['stat_borough']))
+                    <p class="mt-6 text-lg font-semibold text-[#003366] dark:text-[#4a90e2]">
+                        {{ $about['stat_borough'] }}
+                    </p>
+                    @endif
                 </div>
                 
                 <div class="relative reveal">
                     <div class="aspect-square rounded-2xl overflow-hidden shadow-xl">
                         @if($about['image'])
                             <!-- Mostrar imagen si está configurada -->
-                            <img src="{{ Storage::disk('public')->url($about['image']) }}" 
+                            <img src="{{ Storage::disk('public')->url($about['image']) }}" loading="lazy" 
                                  alt="{{ $about['image_text'] }}" 
                                  class="absolute inset-0 w-full h-full object-cover" style="z-index: 0;">
                             <!-- Overlay para mejorar visibilidad del SVG y texto -->
@@ -196,14 +206,15 @@
                              x-transition:enter="transition ease-out duration-300"
                              x-transition:enter-start="opacity-0 transform translate-y-4"
                              x-transition:enter-end="opacity-100 transform translate-y-0"
-                             class="group project-card bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+                             class="group project-card bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300" 
                              x-data="{ sliderPosition: 50 }">
+                            <a href="{{ route('projects.show', $project->slug ?? $project->id) }}" class="block">
                             <div class="aspect-[4/3] relative overflow-hidden">
                                 <div class="relative w-full h-full">
                                     <!-- After Image -->
                                     <img src="{{ $project->image_after ? Storage::disk('public')->url($project->image_after) : '#' }}" 
                                          alt="{{ $project->title }}" 
-                                         class="absolute inset-0 w-full h-full object-cover"
+                                         class="absolute inset-0 w-full h-full object-cover" loading="lazy"
                                          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div class="absolute inset-0 bg-gradient-to-br from-[#CCCC99] to-[#336699] hidden items-center justify-center">
                                         <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,7 +224,7 @@
                                     <!-- Before Image -->
                                     <img src="{{ $project->image_before ? Storage::disk('public')->url($project->image_before) : '#' }}" 
                                          alt="{{ $project->title }} - Before" 
-                                         class="absolute inset-0 w-full h-full object-cover" 
+                                         class="absolute inset-0 w-full h-full object-cover" loading="lazy" 
                                          :style="`clip-path: inset(0 ${100 - sliderPosition}% 0 0);`"
                                          onerror="this.style.display='none';">
                                     <div class="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 hidden" 
@@ -244,9 +255,11 @@
                                 <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-2">{{ $project->title }}</h3>
                                 <p class="text-gray-600 dark:text-gray-300">{{ $project->description ?? 'Transform your existing space with expert renovation services. Drag to see before/after.' }}</p>
                             </div>
+                            </a>
                         </div>
                     @else
                         <!-- Regular Project Card -->
+                        <a href="{{ route('projects.show', $project->slug ?? $project->id) }}">
                         <div x-show="activeFilter === 'all' || activeFilter === '{{ $project->category }}'" 
                              x-transition:enter="transition ease-out duration-300"
                              x-transition:enter-start="opacity-0 transform translate-y-4"
@@ -254,7 +267,7 @@
                              class="group project-card bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300">
                             <div class="aspect-[4/3] bg-gradient-to-br from-[#336699] to-[#003366] relative overflow-hidden">
                                 @if($project->image_after)
-                                    <img src="{{ Storage::disk('public')->url($project->image_after) }}" alt="{{ $project->title }}" class="absolute inset-0 w-full h-full object-cover">
+                                    <img src="{{ Storage::disk('public')->url($project->image_after) }}" alt="{{ $project->title }}" class="absolute inset-0 w-full h-full object-cover" loading="lazy">
                                 @endif
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-6 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
@@ -269,12 +282,19 @@
                                 <p class="text-gray-600 dark:text-gray-300">{{ $project->description ?? 'Custom construction project with precision and attention to detail.' }}</p>
                             </div>
                         </div>
+                        </a>
                     @endif
                 @empty
                     <div class="col-span-full text-center py-12">
                         <p class="text-gray-500 text-lg">No projects available yet. Check back soon!</p>
                     </div>
                 @endforelse
+            </div>
+            <div class="text-center mt-16 reveal">
+                <a href="#quote" class="inline-flex items-center bg-[#003366] dark:bg-[#336699] text-white px-8 py-4 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-lg shadow-lg">
+                    {{ $hero['cta_text'] }}
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </a>
             </div>
         </div>
     </section>
@@ -331,6 +351,76 @@
                     </p>
                 </div>
             </div>
+            
+            <div class="text-center mt-16 reveal">
+                <a href="#quote" class="inline-flex items-center bg-[#003366] dark:bg-[#336699] text-white px-8 py-4 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-lg shadow-lg">
+                    {{ $hero['cta_text'] }}
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Process Section - 4 Steps -->
+    <section id="process" class="py-24 bg-[#CCCC99]/20 dark:bg-gray-800/50 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20 reveal">
+                <span class="text-sm font-medium text-[#336699] dark:text-[#4a90e2] uppercase tracking-wider mb-4 block">How It Works</span>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#003366] dark:text-white mb-6">Our Simple 4-Step Process</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
+                    From consultation to completion, we make it easy
+                </p>
+                <div class="w-20 h-0.5 bg-[#CCCC99] dark:bg-[#4a90e2] mx-auto"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-[#336699] to-[#003366] rounded-full flex items-center justify-center mx-auto mb-6 text-white font-bold text-2xl">1</div>
+                    <h3 class="text-xl font-serif font-bold text-[#003366] dark:text-white mb-3">Contact Us</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Get your free quote in minutes. No obligation.</p>
+                </div>
+                <div class="text-center reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-[#336699] to-[#003366] rounded-full flex items-center justify-center mx-auto mb-6 text-white font-bold text-2xl">2</div>
+                    <h3 class="text-xl font-serif font-bold text-[#003366] dark:text-white mb-3">Consultation</h3>
+                    <p class="text-gray-600 dark:text-gray-300">We discuss your project and provide a detailed estimate.</p>
+                </div>
+                <div class="text-center reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-[#336699] to-[#003366] rounded-full flex items-center justify-center mx-auto mb-6 text-white font-bold text-2xl">3</div>
+                    <h3 class="text-xl font-serif font-bold text-[#003366] dark:text-white mb-3">Agreement</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Clear timeline and contract. No surprises.</p>
+                </div>
+                <div class="text-center reveal">
+                    <div class="w-16 h-16 bg-gradient-to-br from-[#336699] to-[#003366] rounded-full flex items-center justify-center mx-auto mb-6 text-white font-bold text-2xl">4</div>
+                    <h3 class="text-xl font-serif font-bold text-[#003366] dark:text-white mb-3">Construction</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Quality work delivered on time. Guaranteed.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-16 reveal">
+                <a href="#quote" class="inline-flex items-center bg-[#003366] dark:bg-[#336699] text-white px-8 py-4 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-lg shadow-lg">
+                    {{ $hero['cta_text'] }}
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Guarantee Section -->
+    <section class="py-24 bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center reveal">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
+                <svg class="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#003366] dark:text-white mb-6">100% Satisfaction Guarantee</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                We stand behind our work. If you're not completely satisfied with our construction services, we'll make it right. Your peace of mind is our priority.
+            </p>
+            <a href="#quote" class="inline-flex items-center bg-[#003366] dark:bg-[#336699] text-white px-8 py-4 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-lg shadow-lg">
+                {{ $hero['cta_text'] }}
+                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+            </a>
         </div>
     </section>
     
@@ -343,6 +433,11 @@
                 <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
                     {{ $testimonials['description'] }}
                 </p>
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[#003366] dark:text-white font-medium mb-6">
+                    <span>{{ $about['stat_projects'] ?? '200+' }} projects completed</span>
+                    <span>{{ $about['stat_years'] ?? '15+' }} years in business</span>
+                    <span>{{ $about['stat_rating'] ?? '4.9/5' }} average rating</span>
+                </div>
                 <div class="w-20 h-0.5 bg-[#CCCC99] dark:bg-[#4a90e2] mx-auto"></div>
             </div>
             
@@ -430,35 +525,115 @@
     <!-- Quote Request Section - Multi-Step Form -->
     <section id="quote" class="py-24 bg-gradient-to-b from-white to-[#CCCC99]/20 dark:from-gray-900 dark:to-gray-800/50 transition-colors duration-300">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            @if(session('success'))
+            <div class="mb-8 p-6 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl text-green-800 dark:text-green-200 text-center">
+                {{ session('success') }}
+            </div>
+            @endif
             <div class="text-center mb-20 reveal">
                 <span class="text-sm font-medium text-[#336699] dark:text-[#4a90e2] uppercase tracking-wider mb-4 block">Get Started</span>
                 <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#003366] dark:text-white mb-6">Request Your Free Quote</h2>
                 <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto mb-4">
                     Tell us about your project and we'll provide a detailed estimate
                 </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xl mx-auto mb-2">We respond within 24h. No spam.</p>
+                @if(!empty($contact['schedule_url']))
+                <p class="text-sm mb-4">
+                    <a href="{{ $contact['schedule_url'] }}" target="_blank" rel="noopener" class="text-[#336699] dark:text-[#4a90e2] hover:underline font-medium">Schedule a Call Instead</a>
+                </p>
+                @else
+                <p class="text-sm mb-4">
+                    <a href="tel:{{ $contact['phone_link'] ?? '+13476366128' }}" class="text-[#336699] dark:text-[#4a90e2] hover:underline font-medium">Prefer to call? {{ $contact['phone'] ?? '+1.3476366128' }}</a>
+                </p>
+                @endif
                 <div class="w-20 h-0.5 bg-[#CCCC99] dark:bg-[#4a90e2] mx-auto"></div>
             </div>
             
             <div class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-8 md:p-12 shadow-2xl" 
                  x-data="{ 
                      currentStep: 1, 
-                     totalSteps: 4,
+                     totalSteps: 2,
+                     partialQuoteId: null,
+                     saving: false,
+                     quotePrefill: @js($quotePrefill ?? []),
                      formData: {
                          service: '',
-                         budget: '',
                          name: '',
                          email: '',
                          phone: '',
                          address: '',
+                         budget: '',
+                         timeline: '',
+                         property_type: '',
                          message: '',
-                         photos: []
+                         photos: [],
+                         calculator_budget_min: '',
+                         calculator_budget_max: '',
+                         estimated_value: '',
+                         calculator_sqft: '',
+                         calculator_type: '',
+                         calculator_borough: '',
+                         calculator_finish_level: '',
+                         calculator_algorithm_version: '',
+                         calculation_hash: '',
+                         from_calculator: false
                      },
                      uploadedFiles: [],
-                     
-                     nextStep() {
-                         if (this.currentStep < this.totalSteps) {
-                             this.currentStep++;
+                     init() {
+                         if (this.quotePrefill.service) this.formData.service = this.quotePrefill.service;
+                         if (this.quotePrefill.budget) this.formData.budget = this.quotePrefill.budget;
+                         if (this.quotePrefill.budget_min) { this.formData.calculator_budget_min = this.quotePrefill.budget_min; this.formData.from_calculator = true; }
+                         if (this.quotePrefill.budget_max) { this.formData.calculator_budget_max = this.quotePrefill.budget_max; this.formData.from_calculator = true; }
+                         if (this.quotePrefill.estimated_value) this.formData.estimated_value = this.quotePrefill.estimated_value;
+                         if (this.quotePrefill.calc_sqft) this.formData.calculator_sqft = this.quotePrefill.calc_sqft;
+                         if (this.quotePrefill.calc_type) this.formData.calculator_type = this.quotePrefill.calc_type;
+                         if (this.quotePrefill.calc_borough) this.formData.calculator_borough = this.quotePrefill.calc_borough;
+                         if (this.quotePrefill.calc_finish) this.formData.calculator_finish_level = this.quotePrefill.calc_finish;
+                         if (this.quotePrefill.calc_version) this.formData.calculator_algorithm_version = this.quotePrefill.calc_version;
+                         if (this.quotePrefill.calculation_hash) this.formData.calculation_hash = this.quotePrefill.calculation_hash;
+                     },
+                     async nextStep() {
+                         if (!this.formData.name || !this.formData.email || !this.formData.service) return;
+                         this.saving = true;
+                         try {
+                             const payload = {
+                                 name: this.formData.name,
+                                 email: this.formData.email,
+                                 service: this.formData.service,
+                                 timeline: this.formData.timeline || null,
+                                 property_type: this.formData.property_type || null,
+                                 from_calculator: this.formData.from_calculator,
+                                 calculator_budget_min: this.formData.calculator_budget_min || null,
+                                 calculator_budget_max: this.formData.calculator_budget_max || null,
+                                 estimated_value: this.formData.estimated_value || null,
+                                 calculator_sqft: this.formData.calculator_sqft || null,
+                                 calculator_type: this.formData.calculator_type || null,
+                                 calculator_borough: this.formData.calculator_borough || null,
+                                 calculator_finish_level: this.formData.calculator_finish_level || null,
+                                 calculator_algorithm_version: this.formData.calculator_algorithm_version || null,
+                                 calculation_hash: this.formData.calculation_hash || null
+                             };
+                             const res = await fetch('{{ route('quote.partial') }}', {
+                                 method: 'POST',
+                                 headers: {
+                                     'Content-Type': 'application/json',
+                                     'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                     'Accept': 'application/json',
+                                     'X-Requested-With': 'XMLHttpRequest'
+                                 },
+                                 body: JSON.stringify(payload)
+                             });
+                             const data = await res.json();
+                             if (data.success && data.quote_id) {
+                                 this.partialQuoteId = data.quote_id;
+                                 this.currentStep = 2;
+                             } else {
+                                 alert('Something went wrong. Please try again.');
+                             }
+                         } catch (e) {
+                             alert('Something went wrong. Please try again.');
                          }
+                         this.saving = false;
                      },
                      
                      prevStep() {
@@ -522,12 +697,28 @@
                     </div>
                 </div>
                 
-                <form action="{{ route('contact.submit') }}" method="POST" enctype="multipart/form-data" id="quoteForm">
+                <form action="{{ route('quote.complete') }}" method="POST" enctype="multipart/form-data" id="quoteForm" x-ref="quoteForm">
                     @csrf
+                    <input type="hidden" name="quote_id" :value="partialQuoteId" x-model="partialQuoteId">
                     
-                    <!-- Step 1: Service Type -->
+                    <!-- Step 1: Name, Email, Service Type -->
                     <div x-show="currentStep === 1" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
-                        <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6">What service do you need?</h3>
+                        <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6">Let's get started</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Full Name *</label>
+                                <input type="text" name="name" x-model="formData.name" required
+                                       class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Email Address *</label>
+                                <input type="email" name="email" x-model="formData.email" required
+                                       class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">What service do you need? *</label>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                             <label class="relative cursor-pointer">
                                 <input type="radio" name="service" value="residential" x-model="formData.service" @@change="formData.service = 'residential'" class="peer sr-only" required>
@@ -594,77 +785,45 @@
                                 </div>
                             </label>
                         </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Timeline</label>
+                                <select x-model="formData.timeline" class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
+                                    <option value="">Select timeline</option>
+                                    <option value="asap">ASAP</option>
+                                    <option value="1-3 months">1–3 months</option>
+                                    <option value="3-6 months">3–6 months</option>
+                                    <option value="6+ months">6+ months</option>
+                                    <option value="planning">Just planning</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Property type</label>
+                                <select x-model="formData.property_type" class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
+                                    <option value="">Select property type</option>
+                                    <option value="single_family">Single family home</option>
+                                    <option value="condo">Condo</option>
+                                    <option value="coop">Co-op</option>
+                                    <option value="multi_family">Multi-family</option>
+                                    <option value="commercial">Commercial</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="flex justify-end">
                             <button type="button" @@click="nextStep()" 
-                                    :disabled="!formData.service || formData.service === ''"
-                                    :class="(formData.service && formData.service !== '') ? 'bg-[#003366] dark:bg-[#336699] hover:bg-[#004080] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
+                                    :disabled="!formData.name || !formData.email || !formData.service || saving"
+                                    :class="(formData.name && formData.email && formData.service && !saving) ? 'bg-[#003366] dark:bg-[#336699] hover:bg-[#004080] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
                                     class="text-white px-8 py-3 rounded-lg font-medium transition-all">
-                                Next Step →
+                                <span x-show="!saving">Next Step →</span>
+                                <span x-show="saving" x-cloak>Saving...</span>
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Step 2: Budget -->
+                    <!-- Step 2: Contact Info + Details -->
                     <div x-show="currentStep === 2" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
-                        <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6">What's your estimated budget?</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="budget" value="under-25k" x-model="formData.budget" @@change="formData.budget = 'under-25k'" class="peer sr-only" required>
-                                <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all peer-checked:border-[#003366] dark:peer-checked:border-[#336699] peer-checked:bg-[#003366]/5 dark:peer-checked:bg-[#336699]/20 text-center">
-                                    <div class="font-semibold text-[#003366] dark:text-white mb-1">Under $25,000</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">Small Projects</div>
-                                </div>
-                            </label>
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="budget" value="25k-50k" x-model="formData.budget" @@change="formData.budget = '25k-50k'" class="peer sr-only" required>
-                                <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all peer-checked:border-[#003366] dark:peer-checked:border-[#336699] peer-checked:bg-[#003366]/5 dark:peer-checked:bg-[#336699]/20 text-center">
-                                    <div class="font-semibold text-[#003366] dark:text-white mb-1">$25,000 - $50,000</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">Medium Projects</div>
-                                </div>
-                            </label>
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="budget" value="50k-100k" x-model="formData.budget" @@change="formData.budget = '50k-100k'" class="peer sr-only" required>
-                                <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all peer-checked:border-[#003366] dark:peer-checked:border-[#336699] peer-checked:bg-[#003366]/5 dark:peer-checked:bg-[#336699]/20 text-center">
-                                    <div class="font-semibold text-[#003366] dark:text-white mb-1">$50,000 - $100,000</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">Large Projects</div>
-                                </div>
-                            </label>
-                            <label class="relative cursor-pointer">
-                                <input type="radio" name="budget" value="over-100k" x-model="formData.budget" @@change="formData.budget = 'over-100k'" class="peer sr-only" required>
-                                <div class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all peer-checked:border-[#003366] dark:peer-checked:border-[#336699] peer-checked:bg-[#003366]/5 dark:peer-checked:bg-[#336699]/20 text-center">
-                                    <div class="font-semibold text-[#003366] dark:text-white mb-1">Over $100,000</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400">Premium Projects</div>
-                                </div>
-                            </label>
-                        </div>
-                        <div class="flex justify-between">
-                            <button type="button" @@click="prevStep()" 
-                                    class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white px-8 py-3 rounded-lg font-medium border-2 border-[#CCCC99] dark:border-gray-600 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all">
-                                ← Previous
-                            </button>
-                            <button type="button" @@click="nextStep()" 
-                                    :disabled="!formData.budget || formData.budget === ''"
-                                    :class="(formData.budget && formData.budget !== '') ? 'bg-[#003366] dark:bg-[#336699] hover:bg-[#004080] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
-                                    class="text-white px-8 py-3 rounded-lg font-medium transition-all">
-                                Next Step →
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 3: Contact Information -->
-                    <div x-show="currentStep === 3" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
-                        <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6">Your Contact Information</h3>
+                        <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6">Your Contact Information & Project Details</h3>
                         <div class="space-y-4 mb-6">
-                            <div>
-                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Full Name *</label>
-                                <input type="text" name="name" x-model="formData.name" required
-                                       class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Email Address *</label>
-                                <input type="email" name="email" x-model="formData.email" required
-                                       class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
-                            </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Phone Number</label>
@@ -677,24 +836,18 @@
                                            class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
                                 </div>
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Estimated Budget (Optional)</label>
+                                <select name="budget" x-model="formData.budget"
+                                        class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all">
+                                    <option value="">Select budget range</option>
+                                    <option value="under-25k">Under $25,000</option>
+                                    <option value="25k-50k">$25,000 - $50,000</option>
+                                    <option value="50k-100k">$50,000 - $100,000</option>
+                                    <option value="over-100k">Over $100,000</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="flex justify-between">
-                            <button type="button" @@click="prevStep()" 
-                                    class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white px-8 py-3 rounded-lg font-medium border-2 border-[#CCCC99] dark:border-gray-600 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all">
-                                ← Previous
-                            </button>
-                            <button type="button" @@click="nextStep()" 
-                                    :disabled="!formData.name || !formData.email"
-                                    :class="formData.name && formData.email ? 'bg-[#003366] dark:bg-[#336699] hover:bg-[#004080] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
-                                    class="text-white px-8 py-3 rounded-lg font-medium transition-all">
-                                Next Step →
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 4: Photos & Message -->
-                    <div x-show="currentStep === 4" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-x-4" x-transition:enter-end="opacity-100 transform translate-x-0">
-                        <h3 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6">Project Details & Photos</h3>
                         <div class="space-y-6 mb-6">
                             <div>
                                 <label class="block text-sm font-medium text-[#003366] dark:text-gray-200 mb-2">Project Description (Optional)</label>
@@ -743,20 +896,28 @@
                             </div>
                         </div>
                         
-                        <!-- reCAPTCHA -->
+                        <!-- reCAPTCHA (solo si está configurado) -->
+                        @if($recaptchaSiteKey)
                         <div class="mb-6">
                             <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
                         </div>
+                        @endif
                         
-                        <div class="flex justify-between">
+                        <div class="flex justify-between items-center">
                             <button type="button" @@click="prevStep()" 
-                                    class="text-[#003366] hover:text-[#336699] px-8 py-3 rounded-lg font-medium border-2 border-[#CCCC99] hover:border-[#336699] transition-all">
+                                    class="text-[#003366] dark:text-gray-200 hover:text-[#336699] dark:hover:text-white px-8 py-3 rounded-lg font-medium border-2 border-[#CCCC99] dark:border-gray-600 hover:border-[#336699] dark:hover:border-[#4a90e2] transition-all">
                                 ← Previous
                             </button>
-                            <button type="submit" 
-                                    class="bg-[#003366] hover:bg-[#004080] text-white px-8 py-3 rounded-lg font-medium transition-all">
-                                Submit Request
-                            </button>
+                            <div class="text-right">
+                                <button type="submit" 
+                                        :disabled="!partialQuoteId"
+                                        :class="partialQuoteId ? 'bg-[#003366] hover:bg-[#004080] dark:bg-[#336699] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
+                                        class="text-white px-8 py-3 rounded-lg font-medium transition-all">
+                                    Submit Request
+                                </button>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">We usually respond in under 24 hours</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">No obligation, completely free</p>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -864,10 +1025,12 @@
                                       class="w-full px-4 py-3 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:border-[#336699] dark:focus:border-[#4a90e2] focus:outline-none transition-all"></textarea>
                         </div>
                         
-                        <!-- reCAPTCHA -->
+                        <!-- reCAPTCHA (solo si está configurado) -->
+                        @if($recaptchaSiteKey)
                         <div>
                             <div class="g-recaptcha" data-sitekey="{{ $recaptchaSiteKey }}"></div>
                         </div>
+                        @endif
                         
                         <button type="submit" 
                                 class="w-full bg-[#003366] dark:bg-[#336699] hover:bg-[#004080] dark:hover:bg-[#4a90e2] text-white px-8 py-4 rounded-lg font-medium text-lg transition-all">

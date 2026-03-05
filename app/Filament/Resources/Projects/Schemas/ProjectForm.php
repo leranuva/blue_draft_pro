@@ -18,7 +18,14 @@ class ProjectForm
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', \Illuminate\Support\Str::slug($state)))
                     ->label('Project Title'),
+                TextInput::make('slug')
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true)
+                    ->helperText('URL-friendly. Auto-generated from title.')
+                    ->label('URL Slug'),
                 Textarea::make('description')
                     ->rows(4)
                     ->columnSpanFull()
