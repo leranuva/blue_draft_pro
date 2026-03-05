@@ -20,7 +20,7 @@ Sitio web corporativo para Blue Draft Construction Company (NYC), desarrollado c
 - **CRO**: CTAs contextuales, lead scoring, prefill desde calculadora, dashboard de conversión
 - **Panel Filament** con pipeline de cotizaciones, gestión de proyectos, servicios, posts y settings
 
-> **Documentación detallada:** Ver [docs/DOCUMENTACION_COMPLETA.md](docs/DOCUMENTACION_COMPLETA.md) — Guía de todo lo implementado y usos recomendados. También: [ESTADO_ACTUAL_PROYECTO.md](docs/ESTADO_ACTUAL_PROYECTO.md), [FASES_IMPLEMENTACION.md](docs/FASES_IMPLEMENTACION.md), [PROYECTO_IMPLEMENTADO.md](PROYECTO_IMPLEMENTADO.md)
+> **Documentación:** Ver [docs/INDEX.md](docs/INDEX.md) — Orden de lectura profesional para el equipo. Guía maestra: [DOCUMENTACION_COMPLETA.md](docs/DOCUMENTACION_COMPLETA.md)
 
 ---
 
@@ -201,12 +201,11 @@ config/
 ├── tracking.php        # GTM, GA4, Meta Pixel
 └── quotes.php          # Auto-asignación leads
 
-docs/                    # Documentación detallada
-├── ESTADO_ACTUAL_PROYECTO.md
+docs/                    # Documentación (ver docs/INDEX.md para orden de lectura)
+├── INDEX.md             # Índice principal — orden profesional
+├── README.md            # Punto de entrada
+├── DOCUMENTACION_COMPLETA.md
 ├── FASES_IMPLEMENTACION.md
-├── CRO_IMPLEMENTADO.md
-├── CLOUDFLARE_SETUP.md
-├── DEPLOYMENT_HOSTINGER.md
 └── ...
 ```
 
@@ -269,17 +268,13 @@ php artisan projects:check
 
 ---
 
-## 📚 Documentación Adicional
+## 📚 Documentación
 
 | Documento | Contenido |
 |-----------|-----------|
-| [DOCUMENTACION_COMPLETA.md](docs/DOCUMENTACION_COMPLETA.md) | **Guía maestra** — Todo implementado y usos recomendados |
-| [SISTEMA_METRICAS_EJECUTIVAS.md](docs/SISTEMA_METRICAS_EJECUTIVAS.md) | KPIs, reporte mensual, revenue pipeline |
-| [TESTING_CHECKLIST.md](docs/TESTING_CHECKLIST.md) | Verificación pre-producción |
-| [ESTADO_ACTUAL_PROYECTO.md](docs/ESTADO_ACTUAL_PROYECTO.md) | Estado por fase, correcciones, rutas |
-| [FASES_IMPLEMENTACION.md](docs/FASES_IMPLEMENTACION.md) | Detalle de las 6 fases |
-| [CRO_IMPLEMENTADO.md](docs/CRO_IMPLEMENTADO.md) | Mejoras de conversión |
-| [COMANDOS_DIAGNOSTICO.md](docs/COMANDOS_DIAGNOSTICO.md) | Comandos images:test-urls, projects:check |
+| [**docs/INDEX.md**](docs/INDEX.md) | **Índice principal** — Orden de lectura profesional para el equipo |
+| [docs/README.md](docs/README.md) | Punto de entrada a la documentación |
+| [DOCUMENTACION_COMPLETA.md](docs/DOCUMENTACION_COMPLETA.md) | Guía maestra — Todo implementado y usos recomendados |
 | [PROYECTO_IMPLEMENTADO.md](PROYECTO_IMPLEMENTADO.md) | Resumen funcionalidades |
 | [Project Proposal](/project-proposal) | Professional proposal & usage guide (English) |
 
