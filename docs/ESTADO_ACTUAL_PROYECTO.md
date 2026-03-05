@@ -36,10 +36,11 @@ El proyecto **Blue Draft** está **completamente implementado** según la estrat
 - **User model:** `canAccessPanel()` acepta @bluedraft.org y @bluedraft.cc.
 
 ### 2. Pillar distritos (SEO local)
-- **Config:** `pillar_cities.php` — 5 distritos: Manhattan, Queens, Brooklyn, Bronx, New Jersey.
-- **Ruta:** `GET /construction-company-{city}` (pillar.city) implementada.
-- **PillarCitySeeder:** Crea settings para cada distrito (pillar_manhattan, pillar_queens, etc.).
-- **URLs:** `/construction-company-manhattan`, `/construction-company-queens`, etc.
+- **Config:** `pillar_cities.php` — 5 boroughs con FAQs, building_regulations, context, calculator_borough.
+- **Ruta:** `GET /construction-company-{city}` (pillar.city).
+- **Secciones:** Hero (2 CTAs), Services, Typical Renovation Costs, Building Regulations, Borough Insights, FAQs (schema FAQPage).
+- **Cost Calculator:** Enlace con `?borough=` para pre-selección.
+- **PillarCitySeeder:** `php artisan db:seed --class=PillarCitySeeder` — títulos "Apartment Renovation Contractor in [Borough]".
 
 ### 3. Sitemap y reCAPTCHA
 - **SitemapController:** Incluye posts publicados (`Post::published()`).
@@ -84,9 +85,10 @@ app/
 └── ...
 
 config/
+├── cost_calculator.php  # Rangos, borough_insights, typical_ranges, timelines_dynamic
 ├── email_sequence.php
-├── pillar_cities.php
-├── services.php   # + recaptcha
+├── pillar_cities.php    # FAQs, building_regulations, calculator_borough
+├── services.php        # + recaptcha
 └── tracking.php
 
 database/seeders/
@@ -114,7 +116,7 @@ database/seeders/
 | GET | /free-renovation-guide | LeadMagnetController@show |
 | POST | /free-renovation-guide | LeadMagnetController@submit |
 | GET | /free-renovation-guide/guide | LeadMagnetController@guide |
-| GET | /cost-calculator | CostCalculatorController@show |
+| GET | /cost-calculator | CostCalculatorController@show (soporta ?borough=manhattan) |
 | GET | /sitemap.xml | SitemapController@index |
 
 ---
@@ -140,6 +142,12 @@ Schedule::command('leads:check-followups')->hourly();
 7. **Cron:** `* * * * * php artisan schedule:run` para comandos programados.
 
 ---
+
+## Mejoras Recientes (v1.2+)
+
+- **Cost Calculator v2.1:** Contexto mercado, timeline dinámico, borough insights, proyecto similar, disclaimer, scoring dinámico (+2 whole_house, +1 commercial, etc.).
+- **Páginas pilar:** Typical Costs, Building Regulations, Borough Insights, FAQs con schema, enlace calculadora con ?borough=.
+- **Documentación:** [COST_CALCULATOR.md](COST_CALCULATOR.md), [PILAR_POR_DISTRITO_GUIA.md](PILAR_POR_DISTRITO_GUIA.md).
 
 ## Próximos Pasos Opcionales
 

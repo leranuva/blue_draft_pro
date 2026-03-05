@@ -18,13 +18,13 @@ class PillarCitySeeder extends Seeder
             $name = $config['name'] ?? ucfirst(str_replace('-', ' ', $slug));
             $group = 'pillar_' . $slug;
 
-            $defaultContent = "<p>Blue Draft offers expert construction and renovation services in {$name}. Kitchen remodeling, bathroom renovation, commercial construction. Contact us for a free estimate.</p>";
+            $defaultContent = "<p>Renovating an apartment or home in {$name} requires experienced contractors who understand NYC building regulations, permits, and board approvals. At Blue Draft, we provide full-service renovation solutions for {$name} properties, including kitchen remodeling, bathroom renovation, and complete apartment transformations.</p><p>Our team works with property managers, architects, and building boards to ensure every renovation meets NYC code requirements. Contact us for a free estimate.</p>";
 
             $settings = [
-                ['key' => $group . '_title', 'value' => "Construction Company {$name} | Blue Draft", 'type' => 'text', 'group' => $group],
-                ['key' => $group . '_meta_description', 'value' => "Premier construction company in {$name}. Kitchen remodeling, bathroom renovation, commercial construction. Free estimates.", 'type' => 'text', 'group' => $group],
-                ['key' => $group . '_hero_title', 'value' => "Construction Company {$name}", 'type' => 'text', 'group' => $group],
-                ['key' => $group . '_hero_subtitle', 'value' => "Premium Construction Services in {$name}", 'type' => 'text', 'group' => $group],
+                ['key' => $group . '_title', 'value' => "Renovation Contractor {$name} | Blue Draft", 'type' => 'text', 'group' => $group],
+                ['key' => $group . '_meta_description', 'value' => "Premier renovation contractor in {$name}. Kitchen remodeling, bathroom renovation, apartment renovations. Free estimates.", 'type' => 'text', 'group' => $group],
+                ['key' => $group . '_hero_title', 'value' => "Apartment Renovation Contractor in {$name}", 'type' => 'text', 'group' => $group],
+                ['key' => $group . '_hero_subtitle', 'value' => "Licensed NYC contractors for kitchen, bathroom, and full apartment renovations in {$name}.", 'type' => 'text', 'group' => $group],
                 ['key' => $group . '_content', 'value' => $defaultContent, 'type' => 'textarea', 'group' => $group],
             ];
 

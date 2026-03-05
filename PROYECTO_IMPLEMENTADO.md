@@ -10,7 +10,7 @@
 7. [Configuración](#configuración)
 8. [Comandos Útiles](#comandos-útiles)
 
-> **Documentación de desarrollo:** Ver carpeta [docs/](docs/) — [FASES_IMPLEMENTACION.md](docs/FASES_IMPLEMENTACION.md), [ESTADO_ACTUAL_PROYECTO.md](docs/ESTADO_ACTUAL_PROYECTO.md).
+> **Documentación de desarrollo:** Ver carpeta [docs/](docs/) — [INDEX.md](docs/INDEX.md) (orden de lectura), [FASES_IMPLEMENTACION.md](docs/FASES_IMPLEMENTACION.md), [ESTADO_ACTUAL_PROYECTO.md](docs/ESTADO_ACTUAL_PROYECTO.md), [COST_CALCULATOR.md](docs/COST_CALCULATOR.md), [PILAR_POR_DISTRITO_GUIA.md](docs/PILAR_POR_DISTRITO_GUIA.md).
 
 ---
 
@@ -54,12 +54,12 @@
 | `GET /services` | Redirige a `/#services` (landing) |
 | `GET /services/{slug}` | Detalle de servicio (slugs NYC) |
 | `GET /construction-company-new-york` | Página pilar NYC |
-| `GET /construction-company-{city}` | Páginas pilar distritos (Manhattan, Queens, Brooklyn, Bronx, NJ) |
+| `GET /construction-company-{city}` | Páginas pilar por borough (Manhattan, Queens, Brooklyn, Bronx, NJ) — Typical Costs, Building Regs, Borough Insights, FAQs |
 | `GET /projects/{slug}` | Detalle de proyecto |
 | `GET /blog` | Índice del blog |
 | `GET /blog/{slug}` | Post individual |
 | `GET /free-renovation-guide` | Lead magnet (captura email) |
-| `GET /cost-calculator` | Calculadora de costes |
+| `GET /cost-calculator` | Calculadora de costes v2.1 (contexto mercado, timeline dinámico, borough insights, `?borough=` prefill) |
 | `GET /sitemap.xml` | Sitemap XML dinámico |
 
 ### Panel de Administración (`/system-bd-access`)
@@ -82,7 +82,7 @@
 
 ### Tracking (GTM, GA4, Meta Pixel)
 
-- Eventos: `form_submit`, `phone_click`, `scroll_75_percent`, `time_on_page_30s`, `service_view`, `lead_magnet_view`, `cost_calculator_view`, `calculator_estimate`
+- Eventos: `form_submit`, `phone_click`, `scroll_75_percent`, `time_on_page_30s`, `service_view`, `lead_magnet_view`, `cost_calculator_view`, `calculator_estimate`, `calculator_step_1_completed`, `calculator_step_2_completed`, `calculator_cta_clicked`
 
 ### SEO
 

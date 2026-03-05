@@ -4,27 +4,38 @@ Resumen de los cambios realizados en la **Fase 6**.
 
 ---
 
-## 1. SEO Local — Otras Ciudades
+## 1. SEO Local — Páginas Pilar por Borough
 
 ### Rutas
-- `GET /construction-company-miami` — Página pilar Miami
-- `GET /construction-company-boston` — Página pilar Boston
-- Rutas dinámicas: `/construction-company-{city}` para ciudades en `config/pillar_cities.php`
+- `GET /construction-company-{city}` — Manhattan, Brooklyn, Queens, Bronx, New Jersey
+- URLs: `/construction-company-manhattan`, `/construction-company-brooklyn`, etc.
 
 ### Configuración
-- `config/pillar_cities.php`: lista de ciudades con `name` y `slug`
-- Cada ciudad usa el grupo de Settings `pillar_{slug}` (ej. `pillar_miami`)
-- Keys esperados: `pillar_miami_title`, `pillar_miami_meta_description`, `pillar_miami_hero_title`, `pillar_miami_hero_subtitle`, `pillar_miami_content`
+- `config/pillar_cities.php`: boroughs con `name`, `calculator_borough`, `context`, `building_regulations`, `faqs`
+- Cada borough usa Settings `pillar_{slug}` (ej. `pillar_manhattan`)
+- Keys: `pillar_manhattan_title`, `pillar_manhattan_meta_description`, `pillar_manhattan_hero_title`, `pillar_manhattan_hero_subtitle`, `pillar_manhattan_content`
+
+### Secciones de cada página
+- Hero con 2 CTAs (Quote + Cost Calculator)
+- SEO intro (150–200 palabras)
+- Services in [Borough]
+- Typical Renovation Costs (desde `config/cost_calculator.php`)
+- Building Regulations (permits, DOB, co-op board)
+- Borough Insights (avg kitchen, popular finish, timeline)
+- FAQs con schema FAQPage
+- CTA final
 
 ### Archivos
 | Archivo | Descripción |
 |---------|-------------|
-| `config/pillar_cities.php` | Lista de ciudades (Miami, Boston) |
-| `app/Http/Controllers/PillarCityController.php` | Controlador dinámico por ciudad |
-| `resources/views/pages/pillar-city.blade.php` | Vista reutilizable para pilares |
+| `config/pillar_cities.php` | Boroughs con FAQs, building_regulations, calculator_borough |
+| `app/Http/Controllers/PillarCityController.php` | Controlador con borough_insights, typical_costs |
+| `resources/views/pages/pillar-city.blade.php` | Vista con todas las secciones |
 
-### Añadir nuevas ciudades
-Editar `config/pillar_cities.php` y añadir la ciudad. Crear Settings en Filament para el grupo `pillar_{slug}` si se desea contenido personalizado.
+### Cost Calculator
+Enlace desde pillar: `/cost-calculator?borough=manhattan` pre-selecciona el borough.
+
+Ver [PILAR_POR_DISTRITO_GUIA.md](PILAR_POR_DISTRITO_GUIA.md).
 
 ---
 
@@ -95,7 +106,7 @@ Editar `config/pillar_cities.php` y añadir la ciudad. Crear Settings en Filamen
 | `resources/views/blog/show.blade.php` | Nuevo |
 | `routes/web.php` | Rutas pillar.city, blog.index, blog.show |
 | `app/Http/Controllers/SitemapController.php` | URLs pilares ciudades, blog |
-| `resources/views/layouts/app.blade.php` | Enlaces footer: Blog, Construction Company Miami/Boston |
+| `resources/views/layouts/app.blade.php` | Enlaces footer: Blog, pillar pages |
 | `bootstrap/app.php` | Middleware CacheHeaders |
 | `docs/CLOUDFLARE_SETUP.md` | Nuevo |
 
@@ -113,10 +124,10 @@ Crea la tabla `posts`.
 
 ## 6. Próximos pasos (opcional)
 
-- Crear Settings para `pillar_miami` y `pillar_boston` en Filament para personalizar contenido
+- Personalizar contenido pillar vía Settings (Filament) o `PillarCitySeeder`
 - Publicar 2+ artículos/mes en el blog (objetivo estratégico)
 - Configurar Cloudflare siguiendo `docs/CLOUDFLARE_SETUP.md` cuando el dominio esté en producción
 
 ---
 
-*Fase 6 — docs/ — Febrero 2025*
+*Fase 6 — docs/ — Febrero 2026*

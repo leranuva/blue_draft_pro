@@ -45,7 +45,8 @@ Read the documents **in order** within each section. Section 1 is for new team m
 | 3.2 | [SISTEMA_METRICAS_EJECUTIVAS.md](SISTEMA_METRICAS_EJECUTIVAS.md) | KPIs, dashboard, monthly report |
 | 3.3 | [CRO_IMPLEMENTADO.md](CRO_IMPLEMENTADO.md) | Conversion optimization features |
 | 3.4 | [COST_CALCULATOR.md](COST_CALCULATOR.md) | Cost calculator implementation |
-| 3.5 | [user.md](user.md) | End-user guide |
+| 3.5 | [PILAR_POR_DISTRITO_GUIA.md](PILAR_POR_DISTRITO_GUIA.md) | Pillar pages by borough — SEO guide and structure |
+| 3.6 | [user.md](user.md) | End-user guide |
 
 ---
 
@@ -118,6 +119,8 @@ Read the documents **in order** within each section. Section 1 is for new team m
 | **Troubleshooting** | Section 5 |
 | **Understanding strategy** | Section 2 |
 | **Feature reference** | 3.1 (DOCUMENTACION_COMPLETA.md) |
+| **Cost calculator** | 3.4 (COST_CALCULATOR.md) |
+| **Pillar pages** | 3.5 (PILAR_POR_DISTRITO_GUIA.md) |
 
 ---
 

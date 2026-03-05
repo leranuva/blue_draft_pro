@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Settings;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CostCalculatorController extends Controller
 {
-    public function show(): View
+    public function show(Request $request): View
     {
+        $validBoroughs = ['manhattan', 'brooklyn', 'queens', 'bronx', 'nj'];
+        $boroughParam = $request->query('borough', '');
+        $defaultBorough = in_array($boroughParam, $validBoroughs) ? $boroughParam : 'manhattan';
         $contactSettings = Settings::where('group', 'contact')->pluck('value', 'key')->toArray();
         $heroSettings = Settings::where('group', 'hero')->pluck('value', 'key')->toArray();
 
@@ -37,6 +41,7 @@ class CostCalculatorController extends Controller
             'breakdownPct' => config('cost_calculator.breakdown_pct'),
             'algorithmVersion' => config('cost_calculator.algorithm_version'),
             'lockQuoteUrl' => route('home') . '?from=calculator',
+            'defaultBorough' => $defaultBorough,
         ]);
     }
 }

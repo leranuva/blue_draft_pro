@@ -10,7 +10,7 @@ Documento que resume las mejoras de conversión implementadas según la evaluaci
 |--------|--------|---------|
 | CTA por servicio | ✅ | `config/cta.php` — CTAs por slug de servicio (kitchen-remodeling-new-york, etc.) |
 | CTA por borough | ✅ | `config/cta.php` — CTAs contextuales por borough (brooklyn, manhattan, etc.) |
-| CTA calculadora | ✅ | "Lock This Estimate — Send to Our Project Manager" en cost-calculator |
+| CTA calculadora | ✅ | "Get Exact Quote for This Estimate — Free, No Obligation" en cost-calculator |
 | Service.cta_text | ✅ | Campo editable en Filament (ServiceForm) para CTA personalizado por servicio |
 
 ---
@@ -38,14 +38,20 @@ Documento que resume las mejoras de conversión implementadas según la evaluaci
 
 ---
 
-## 4. Calculadora → Lead Qualifier
+## 4. Calculadora → Lead Qualifier (v2.1)
 
 | Mejora | Estado | Detalle |
 |--------|--------|---------|
-| CTA "Lock estimate" | ✅ | Enlaza a /#quote con budget, service, budget_min, budget_max |
-| Guardado de datos calculadora | ✅ | `calculator_budget_min`, `calculator_budget_max`, `lead_source=calculator` |
-| Lead score +3 | ✅ | Leads desde calculadora reciben +3 en lead_score |
+| CTA "Get Exact Quote" | ✅ | Enlaza a /#quote con budget, service, budget_min, budget_max, calc_* |
+| Guardado de datos calculadora | ✅ | `calculator_budget_min`, `calculator_budget_max`, `lead_source=calculator`, `calculation_hash` |
+| Lead scoring dinámico | ✅ | +2 base, +2 Manhattan, +2 Premium, +2 whole_house, +1 commercial, +1 sqft>500, +1 budget≥100k |
 | Prefill en formulario | ✅ | Service y budget pre-rellenados al llegar desde calculadora |
+| Contexto de mercado | ✅ | "Typical Kitchen in Brooklyn: $25k–$70k. Your estimate falls within the typical range." |
+| Timeline dinámico | ✅ | Por tipo × borough × finish (ej. Kitchen Manhattan Premium: 7–10 weeks) |
+| Borough insights | ✅ | Avg kitchen, popular finish, avg timeline por borough |
+| Proyecto similar | ✅ | Ejemplo debajo del resultado para confianza |
+| Pre-selección borough | ✅ | `/cost-calculator?borough=manhattan` desde pillar pages |
+| Disclaimer | ✅ | "Estimates are based on typical NYC renovation data. Final costs depend on layout, materials, and building requirements." |
 
 ---
 

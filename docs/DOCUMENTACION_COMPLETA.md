@@ -61,15 +61,23 @@ Blue Draft es un CRM web para empresa de construcción en NYC con:
 
 **Uso recomendado:** Ofrecer guía descargable a cambio del email para nutrir leads fríos.
 
-### 2.3 Calculadora de costes
+### 2.3 Calculadora de costes (v2.1)
 
-**Ruta:** `GET /cost-calculator`
+**Ruta:** `GET /cost-calculator` (soporta `?borough=manhattan` para pre-selección)
 
-- El usuario selecciona tipo de proyecto y obtiene rango de presupuesto.
-- "Lock This Estimate" prefill el formulario de quote con budget y servicio.
-- Lead score +3 para leads pre-cualificados.
+- Flujo 2 pasos: sqft + tipo → borough + finish. Barra de progreso.
+- Contexto de mercado: "Typical Kitchen in Brooklyn: $25k–$70k. Your estimate falls within the typical range."
+- Timeline dinámico por tipo × borough × finish.
+- Borough insights: avg kitchen, popular finish, avg timeline.
+- Proyecto similar debajo del resultado.
+- CTA: "Get Exact Quote for This Estimate — Free, No Obligation".
+- Prefill del formulario de quote con budget, service, calculator_*.
+- **Lead scoring dinámico:** +2 base, +2 Manhattan, +2 Premium, +2 whole_house, +1 commercial, +1 sqft>500, +1 budget≥100k.
+- Disclaimer: "Estimates are based on typical NYC renovation data. Final costs depend on layout, materials, and building requirements."
 
-**Uso recomendado:** Colocar en CTAs de servicios y pillar pages para captar intención de compra.
+**Config:** `config/cost_calculator.php` — price_ranges, type_borough_multipliers, typical_ranges, borough_insights, timelines_dynamic, similar_project_examples.
+
+**Uso recomendado:** Enlazar desde pillar pages con `?borough=` para pre-selección. Ver [COST_CALCULATOR.md](COST_CALCULATOR.md).
 
 ### 2.4 Formulario de contacto
 
@@ -131,6 +139,26 @@ Se captura y guarda en cada lead:
 
 - Hero, About, Services, Testimonials, Contact, Footer.
 - Pillar pages por distrito (Manhattan, Queens, Brooklyn, Bronx, New Jersey).
+
+### 3.5 Páginas pilar por borough
+
+**Rutas:** `GET /construction-company-{city}` (manhattan, brooklyn, queens, bronx, new-jersey)
+
+Cada página incluye:
+- Hero con 2 CTAs (Quote + Cost Calculator)
+- SEO intro (150–200 palabras)
+- Services in [Borough]
+- Typical Renovation Costs (tabla desde cost_calculator)
+- Building Regulations (permits, DOB, co-op board, etc.)
+- Borough Insights (avg kitchen, sqft, popular finish, timeline)
+- FAQs con schema FAQPage
+- CTA final
+
+**Config:** `config/pillar_cities.php` — FAQs, building_regulations, context, calculator_borough por borough.
+
+**Cost Calculator link:** `/cost-calculator?borough=manhattan` pre-selecciona el borough.
+
+Ver [PILAR_POR_DISTRITO_GUIA.md](PILAR_POR_DISTRITO_GUIA.md).
 
 ---
 
@@ -306,7 +334,8 @@ META_PIXEL_ID=
 
 | Archivo | Uso |
 |---------|-----|
-| `config/pillar_cities.php` | Distritos (Manhattan, Queens, Brooklyn, Bronx, New Jersey) |
+| `config/pillar_cities.php` | Boroughs (FAQs, building_regulations, context, calculator_borough) |
+| `config/cost_calculator.php` | Rangos, multiplicadores, typical_ranges, borough_insights, timelines_dynamic |
 | `config/cta.php` | CTAs por servicio y borough |
 | `config/email_sequence.php` | Delays y contenido secuencia |
 | `config/tracking.php` | GTM, GA4, Meta Pixel |
@@ -364,6 +393,8 @@ META_PIXEL_ID=
 | [TESTING_CHECKLIST.md](TESTING_CHECKLIST.md) | Verificación pre-producción |
 | [ESTADO_ACTUAL_PROYECTO.md](ESTADO_ACTUAL_PROYECTO.md) | Estado por fase |
 | [FASES_IMPLEMENTACION.md](FASES_IMPLEMENTACION.md) | Detalle fases 1-6 |
+| [COST_CALCULATOR.md](COST_CALCULATOR.md) | Calculadora v2.1 — fórmula, scoring, evaluación ejecutiva |
+| [PILAR_POR_DISTRITO_GUIA.md](PILAR_POR_DISTRITO_GUIA.md) | Páginas pilar por borough — SEO y estructura |
 | [CRO_IMPLEMENTADO.md](CRO_IMPLEMENTADO.md) | Mejoras de conversión |
 | [user.md](user.md) | Guía usuario final |
 | [README.md](../README.md) | Instalación y overview |

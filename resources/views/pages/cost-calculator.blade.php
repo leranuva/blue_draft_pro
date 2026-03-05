@@ -56,6 +56,7 @@
         'breakdownPct' => $breakdownPct ?? [],
         'lockQuoteUrl' => $lockQuoteUrl ?? '',
         'algorithmVersion' => $algorithmVersion ?? '2.1',
+        'defaultBorough' => $defaultBorough ?? 'manhattan',
     ];
 @endphp
 <script type="text/javascript">
@@ -243,10 +244,11 @@ function costCalculator() {
         breakdownPct: cfg.breakdownPct || {},
         baseQuoteUrl: cfg.lockQuoteUrl || (window.location.origin + '/#quote'),
         algorithmVersion: cfg.algorithmVersion || '2.1',
+        defaultBorough: cfg.defaultBorough || 'manhattan',
         step: 1,
         sqft: 150,
         type: 'kitchen',
-        borough: 'manhattan',
+        borough: cfg.defaultBorough || 'manhattan',
         finish: 'standard',
         minEstimate: 0,
         maxEstimate: 0,

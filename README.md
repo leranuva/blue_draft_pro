@@ -37,8 +37,9 @@ Sitio web corporativo para Blue Draft Construction Company (NYC), desarrollado c
 | `GET /blog/{slug}` | Post individual |
 | `GET /projects/{slug}` | Detalle de proyecto |
 | `GET /construction-company-new-york` | Página pilar NYC |
+| `GET /construction-company-{city}` | Páginas pilar por borough (Manhattan, Brooklyn, Queens, Bronx, New Jersey) |
 | `GET /free-renovation-guide` | Lead magnet (captura email) |
-| `GET /cost-calculator` | Calculadora de costes NYC |
+| `GET /cost-calculator` | Calculadora de costes NYC (soporta `?borough=manhattan` para pre-selección) |
 | `GET /sitemap.xml` | Sitemap XML dinámico |
 
 ### 🛡️ Panel de Administración (`/system-bd-access`)
@@ -59,10 +60,10 @@ Sitio web corporativo para Blue Draft Construction Company (NYC), desarrollado c
 
 ### 📊 Tracking y CRO
 
-- **Eventos:** form_submit, phone_click, scroll_75_percent, time_on_page_30s, service_view, lead_magnet_view, cost_calculator_view, calculator_estimate
+- **Eventos:** form_submit, phone_click, scroll_75_percent, time_on_page_30s, service_view, lead_magnet_view, cost_calculator_view, calculator_estimate, calculator_step_1_completed, calculator_step_2_completed, calculator_cta_clicked
 - **CTAs contextuales** por servicio y borough (`config/cta.php`)
 - **Prefill** desde calculadora a formulario de quote
-- **Lead scoring** 0–12 (Cold 0–4, Warm 5–8, Hot 9–12)
+- **Lead scoring** dinámico 0–12+ (Cold 0–4, Warm 5–8, Hot 9–12): +2 base, +2 Manhattan, +2 Premium, +2 whole_house, +1 commercial, +1 sqft>500, +1 budget≥100k
 
 ### 🔍 SEO
 
@@ -195,9 +196,10 @@ app/
 └── Services/            # EmailSequenceService
 
 config/
+├── cost_calculator.php  # Rangos, multiplicadores borough/finish, timelines, borough_insights
 ├── cta.php             # CTAs por servicio/borough
 ├── email_sequence.php  # Delays y contenido
-├── pillar_cities.php    # Ciudades pilares (NYC focus)
+├── pillar_cities.php   # Boroughs pilares (FAQs, building_regulations, calculator_borough)
 ├── tracking.php        # GTM, GA4, Meta Pixel
 └── quotes.php          # Auto-asignación leads
 
@@ -222,6 +224,7 @@ docs/                    # Documentación (ver docs/INDEX.md para orden de lectu
 | GET | `/services` | → Redirige a `/#services` |
 | GET | `/services/{slug}` | Detalle servicio |
 | GET | `/construction-company-new-york` | Pilar NYC |
+| GET | `/construction-company-{city}` | Pilar por borough (manhattan, brooklyn, queens, bronx, new-jersey) |
 | GET | `/projects/{slug}` | Detalle proyecto |
 | GET | `/blog` | Índice blog |
 | GET | `/blog/{slug}` | Post individual |
@@ -275,6 +278,8 @@ php artisan projects:check
 | [**docs/INDEX.md**](docs/INDEX.md) | **Índice principal** — Orden de lectura profesional para el equipo |
 | [docs/README.md](docs/README.md) | Punto de entrada a la documentación |
 | [DOCUMENTACION_COMPLETA.md](docs/DOCUMENTACION_COMPLETA.md) | Guía maestra — Todo implementado y usos recomendados |
+| [COST_CALCULATOR.md](docs/COST_CALCULATOR.md) | Calculadora costes v2.1 — fórmula, scoring, borough insights |
+| [PILAR_POR_DISTRITO_GUIA.md](docs/PILAR_POR_DISTRITO_GUIA.md) | Páginas pilar por borough — SEO y estructura |
 | [PROYECTO_IMPLEMENTADO.md](PROYECTO_IMPLEMENTADO.md) | Resumen funcionalidades |
 | [Project Proposal](/project-proposal) | Professional proposal & usage guide (English) |
 
