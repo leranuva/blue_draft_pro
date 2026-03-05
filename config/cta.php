@@ -26,7 +26,7 @@ return [
         'staten_island' => 'Staten Island Renovations — Schedule Your Free Consultation',
     ],
 
-    'calculator' => 'Lock This Estimate — Send to Our Project Manager for Exact Quote',
+    'calculator' => 'Get Exact Quote for This Estimate — Free, No Obligation',
 
     'schedule_call' => 'Prefer to Talk? Schedule a Free 15-Min Call',
 

@@ -5,7 +5,7 @@
 @endpush
 
 @section('title', 'NYC Renovation Cost Calculator | Blue Draft')
-@section('meta_description', 'Estimate your renovation costs in New York City. Kitchen, bathroom, basement, and commercial remodeling cost ranges. Borough-adjusted pricing.')
+@section('meta_description', 'Estimate your renovation costs in NYC. Kitchen, bathroom, basement, whole house, and commercial remodeling. Borough-adjusted pricing with typical market ranges.')
 
 @push('meta')
     <link rel="canonical" href="{{ route('cost-calculator') }}">
@@ -47,6 +47,10 @@
         'finishMultipliers' => $finishMultipliers ?? [],
         'sqftAdjustments' => $sqftAdjustments ?? [],
         'timelines' => $timelines ?? [],
+        'timelinesDynamic' => $timelinesDynamic ?? [],
+        'typicalRanges' => $typicalRanges ?? [],
+        'boroughInsights' => $boroughInsights ?? [],
+        'similarProjectExamples' => $similarProjectExamples ?? [],
         'confidenceText' => $confidenceText ?? '',
         'urgencyText' => $urgencyText ?? '',
         'breakdownPct' => $breakdownPct ?? [],
@@ -60,12 +64,14 @@
 <section class="py-16 bg-white dark:bg-gray-900">
     <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8" x-data="costCalculator()">
         <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-8 shadow-lg">
-            {{-- Step indicator --}}
-            <div class="flex items-center justify-center gap-2 mb-8">
-                <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Step <span x-text="step"></span> of 2</span>
-                <div class="flex gap-1">
-                    <div class="w-8 h-1 rounded-full transition-colors" :class="step >= 1 ? 'bg-[#003366]' : 'bg-gray-300 dark:bg-gray-600'"></div>
-                    <div class="w-8 h-1 rounded-full transition-colors" :class="step >= 2 ? 'bg-[#003366]' : 'bg-gray-300 dark:bg-gray-600'"></div>
+            {{-- Progress bar --}}
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Step <span x-text="step"></span> of 2</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-500" x-text="step === 1 ? 'Basic info' : 'Refine estimate'"></span>
+                </div>
+                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div class="h-full bg-[#003366] dark:bg-[#336699] transition-all duration-300" :style="'width: ' + (step * 50) + '%'"></div>
                 </div>
             </div>
 
@@ -137,38 +143,57 @@
                     –
                     <span x-text="formatCurrency(maxEstimate)"></span>
                 </p>
-                <div class="mt-3 text-sm text-gray-600 dark:text-gray-400">
-                    <strong>Includes:</strong>
-                    <div class="mt-1 grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs" x-show="breakdownPct && Object.keys(breakdownPct).length">
-                        <span x-show="breakdownPct.labor">Labor ~<span x-text="breakdownPct.labor"></span>%</span>
-                        <span x-show="breakdownPct.materials">Materials ~<span x-text="breakdownPct.materials"></span>%</span>
-                        <span x-show="breakdownPct.permits">Permits ~<span x-text="breakdownPct.permits"></span>%</span>
-                        <span x-show="breakdownPct.management">Management ~<span x-text="breakdownPct.management"></span>%</span>
-                    </div>
-                    <p class="mt-1" x-show="!breakdownPct || !Object.keys(breakdownPct || {}).length">Labor • Materials • Permits • Project management</p>
+
+                {{-- Context: typical range vs your estimate --}}
+                <div x-show="typicalRangeText" class="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <p class="text-sm text-green-800 dark:text-green-200" x-html="typicalRangeText"></p>
                 </div>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+
+                <p class="mt-3 text-sm text-gray-600 dark:text-gray-400">
                     Based on <span x-text="sqft"></span> sq ft at $<span x-text="Math.round(range.min)"></span>–$<span x-text="Math.round(range.max)"></span> per sq ft.
                     <span x-text="boroughLabel"></span> pricing.
                 </p>
-                <p class="mt-1 text-xs text-[#336699] dark:text-[#4a90e2] font-medium">
-                    Estimates adjusted for local NYC market conditions.
+
+                {{-- Trust indicators --}}
+                <div class="mt-4 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="flex items-center gap-2"><span class="text-green-600 dark:text-green-400">✔</span> Estimate based on NYC renovation data</p>
+                    <p class="flex items-center gap-2"><span class="text-green-600 dark:text-green-400">✔</span> Includes labor, materials, permits</p>
+                    <p class="flex items-center gap-2"><span class="text-green-600 dark:text-green-400">✔</span> Reviewed by licensed contractors</p>
+                </div>
+
+                <p class="mt-3 text-sm text-gray-500 dark:text-gray-400 italic">
+                    Estimates are based on typical NYC renovation data. Final costs depend on layout, materials, and building requirements.
                 </p>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400" x-show="timeline">
-                    <strong>Average timeline:</strong> <span x-text="timeline"></span>
+
+                <p class="mt-3 text-sm text-gray-600 dark:text-gray-400" x-show="timeline">
+                    <strong>Estimated timeline:</strong> <span x-text="timeline"></span>
                 </p>
-                <p class="mt-2 text-xs text-gray-500 dark:text-gray-500" x-show="confidenceText">
-                    <span x-text="confidenceText"></span>
-                </p>
-                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400" x-show="urgencyText">
-                    <span x-text="urgencyText"></span>
-                </p>
+
+                {{-- Borough insights --}}
+                <div x-show="boroughInsightText" class="mt-4 p-3 bg-[#003366]/5 dark:bg-[#336699]/10 rounded-lg border border-[#336699]/20">
+                    <p class="text-xs font-semibold text-[#003366] dark:text-gray-200 uppercase tracking-wider mb-1">Renovation trends in <span x-text="boroughDisplayName"></span></p>
+                    <p class="text-sm text-gray-600 dark:text-gray-300" x-html="boroughInsightText"></p>
+                </div>
+
                 <a :href="lockEstimateUrl()"
                    @click="trackCtaClick()"
-                   class="mt-4 inline-flex items-center bg-[#003366] dark:bg-[#336699] text-white px-6 py-3 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-sm">
-                    {{ $hero['cta_lock_estimate'] ?? 'Lock This Estimate — Send to Our Project Manager' }}
+                   class="mt-6 inline-flex items-center bg-[#003366] dark:bg-[#336699] text-white px-6 py-3 rounded-lg hover:bg-[#004080] dark:hover:bg-[#4a90e2] transition-all font-medium text-sm">
+                    {{ $hero['cta_lock_estimate'] ?? 'Get Exact Quote for This Estimate — Free, No Obligation' }}
                     <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                 </a>
+
+                {{-- Similar project example --}}
+                <div x-show="similarProject" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-xs font-semibold text-[#003366] dark:text-gray-200 uppercase tracking-wider mb-2">Similar Project</p>
+                    <div class="p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600" x-show="similarProject">
+                        <p class="font-medium text-[#003366] dark:text-white" x-text="similarProject ? similarProject.title : ''"></p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400" x-text="similarProject ? similarProject.location : ''"></p>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                            Project cost: <span class="font-medium" x-text="similarProject ? formatCurrency(similarProject.cost) : ''"></span>
+                            <span x-show="similarProject && similarProject.timeline"> • Timeline: <span x-text="similarProject ? similarProject.timeline : ''"></span></span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -209,6 +234,10 @@ function costCalculator() {
         finishMultipliers,
         sqftAdjustments: sqftAdj,
         timelines: cfg.timelines || {},
+        timelinesDynamic: cfg.timelinesDynamic || {},
+        typicalRanges: cfg.typicalRanges || {},
+        boroughInsights: cfg.boroughInsights || {},
+        similarProjectExamples: cfg.similarProjectExamples || [],
         confidenceText: cfg.confidenceText || '',
         urgencyText: cfg.urgencyText || '',
         breakdownPct: cfg.breakdownPct || {},
@@ -224,6 +253,10 @@ function costCalculator() {
         range: { min: 0, max: 0 },
         timeline: '',
         boroughLabel: '',
+        typicalRangeText: '',
+        boroughInsightText: '',
+        boroughDisplayName: '',
+        similarProject: null,
         estimateTracked: false,
         step1Tracked: false,
         step2Tracked: false,
@@ -231,6 +264,36 @@ function costCalculator() {
         init() {
             this.calculate();
             this.$watch('step', (val) => { if (val === 2) this.trackStep2Complete(); });
+        },
+        getDynamicTimeline() {
+            const dyn = this.timelinesDynamic[this.type];
+            if (dyn && dyn[this.borough] && dyn[this.borough][this.finish]) return dyn[this.borough][this.finish];
+            return this.timelines[this.type] || '';
+        },
+        getTypicalRangeText() {
+            const tr = this.typicalRanges[this.type];
+            if (!tr || !tr[this.borough]) return '';
+            const [tMin, tMax] = tr[this.borough];
+            const bName = boroughLabels[this.borough] || this.borough;
+            const typeName = { kitchen: 'Kitchen', bathroom: 'Bathroom', basement: 'Basement', whole_house: 'Whole house', commercial: 'Commercial' }[this.type] || this.type;
+            const mid = (this.minEstimate + this.maxEstimate) / 2;
+            const inRange = mid >= tMin * 0.9 && mid <= tMax * 1.1;
+            if (inRange) {
+                return `Typical <strong>${typeName}</strong> renovation in <strong>${bName}</strong>: $${(tMin/1000).toFixed(0)}k – $${(tMax/1000).toFixed(0)}k. Your estimate falls within the typical range.`;
+            }
+            return `Typical <strong>${typeName}</strong> renovation in <strong>${bName}</strong>: $${(tMin/1000).toFixed(0)}k – $${(tMax/1000).toFixed(0)}k.`;
+        },
+        getBoroughInsightText() {
+            const bi = this.boroughInsights[this.borough];
+            if (!bi) return '';
+            const bName = boroughLabels[this.borough] || this.borough;
+            const finishLabels = { basic: 'Basic', standard: 'Standard', premium: 'Premium' };
+            return `Average kitchen project: $${(bi.avg_kitchen/1000).toFixed(0)}k • Most popular finish: ${finishLabels[bi.popular_finish] || bi.popular_finish} • Average timeline: ${bi.avg_timeline}`;
+        },
+        getSimilarProject() {
+            const examples = this.similarProjectExamples || [];
+            const match = examples.find(e => e.type === this.type && e.borough === this.borough);
+            return match || examples.find(e => e.type === this.type) || examples[0] || null;
         },
         getBoroughMult() {
             const typeMatrix = this.typeBoroughMultipliers[this.type];
@@ -276,8 +339,12 @@ function costCalculator() {
             };
             this.minEstimate = Math.round(sq * this.range.min);
             this.maxEstimate = Math.round(sq * this.range.max);
-            this.timeline = this.timelines[this.type] || '';
+            this.timeline = this.getDynamicTimeline();
             this.boroughLabel = boroughLabels[this.borough] ? boroughLabels[this.borough] + '-adjusted' : '';
+            this.boroughDisplayName = boroughLabels[this.borough] || this.borough;
+            this.typicalRangeText = this.getTypicalRangeText();
+            this.boroughInsightText = this.getBoroughInsightText();
+            this.similarProject = this.getSimilarProject();
             if (sq > 0 && !this.estimateTracked && typeof window.trackEvent === 'function') {
                 this.estimateTracked = true;
                 window.trackEvent('calculator_estimate', {

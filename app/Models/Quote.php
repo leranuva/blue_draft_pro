@@ -277,6 +277,13 @@ class Quote extends Model
             if ($maxBudget >= 100000) {
                 $score += 1;
             }
+            $calcType = $data['calculator_type'] ?? null;
+            if ($calcType === 'whole_house') {
+                $score += 2;
+            }
+            if ($calcType === 'commercial') {
+                $score += 1;
+            }
         }
         return min($score, 12);
     }

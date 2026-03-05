@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Your NYC Renovation Guide | Blue Draft')
-@section('meta_description', 'Essential tips for kitchen remodeling, bathroom renovation, and home improvement in New York City.')
+@section('meta_description', 'What homeowners should know before starting a renovation in NYC: budget planning, building rules, permits, contractor selection, timelines, and material choices.')
 
 @push('meta')
     <link rel="canonical" href="{{ route('lead-magnet.guide') }}">
@@ -16,28 +16,89 @@
         </div>
         @endif
 
-        <h1 class="text-3xl md:text-4xl font-serif font-bold text-[#003366] dark:text-white mb-6">
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-[#003366] dark:text-white mb-2">
             Your NYC Renovation Guide
         </h1>
+        <p class="text-lg text-gray-600 dark:text-gray-400 mb-8">What homeowners should know before starting a renovation in New York City.</p>
 
-        <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-[#003366] dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-[#336699]">
+        <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-[#003366] dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-[#336699] prose-ul:text-gray-600 dark:prose-ul:text-gray-300">
             <h2>1. Plan Your Budget Early</h2>
-            <p>NYC renovations can vary widely. Kitchen remodels typically range from $15,000 to $75,000+, while bathroom renovations often run $10,000–$35,000. Get at least 2–3 quotes before committing.</p>
+            <p>Renovation costs in NYC vary significantly depending on the scope, building type, and finish level.</p>
+            <p><strong>Typical ranges include:</strong></p>
+            <ul>
+                <li>Kitchen Remodel: $25,000 – $90,000+</li>
+                <li>Bathroom Renovation: $15,000 – $45,000+</li>
+                <li>Full Apartment Renovation: $80 – $200 per sq ft</li>
+            </ul>
+            <p><strong>Factors that influence cost:</strong></p>
+            <ul>
+                <li>Building logistics and restrictions</li>
+                <li>Permit requirements</li>
+                <li>Material quality</li>
+                <li>Structural changes</li>
+            </ul>
+            <p>Before committing to a contractor, it's recommended to get 2–3 detailed quotes and understand what is included in the scope of work.</p>
 
-            <h2>2. Know Your Building Requirements</h2>
-            <p>Co-ops and condos in NYC often have strict rules. Check your building's alteration agreement (Alteration Agreement, or "Alt 1") before starting. Some work requires board approval.</p>
+            <h2>2. Understand Your Building's Rules</h2>
+            <p>Many NYC apartments operate under co-op or condo boards, which have strict renovation policies.</p>
+            <p><strong>Most buildings require:</strong></p>
+            <ul>
+                <li>An Alteration Agreement</li>
+                <li>Board approval before work begins</li>
+                <li>Proof of contractor insurance</li>
+                <li>Security deposits for construction</li>
+            </ul>
+            <p>Failing to follow these rules can delay or even stop your project before it begins.</p>
+            <p>An experienced NYC contractor should be familiar with these requirements and help guide you through the approval process.</p>
 
-            <h2>3. Permits Matter</h2>
-            <p>Electrical, plumbing, and structural changes usually need DOB permits. Working without permits can lead to fines and complications when selling. A licensed contractor will handle this.</p>
+            <h2>3. Permits and Compliance</h2>
+            <p>In many renovations, permits from the NYC Department of Buildings are required.</p>
+            <p><strong>Common work that requires permits:</strong></p>
+            <ul>
+                <li>Electrical upgrades</li>
+                <li>Plumbing modifications</li>
+                <li>Structural changes</li>
+                <li>Wall removal</li>
+            </ul>
+            <p>Working without permits can lead to fines and complications when selling your property later.</p>
+            <p>A licensed contractor should manage the permitting process and ensure all work meets NYC code requirements.</p>
 
-            <h2>4. Choose the Right Contractor</h2>
-            <p>Look for licensed, insured contractors with NYC experience. Check reviews, ask for references, and verify they're familiar with local codes and building requirements.</p>
+            <h2>4. Choosing the Right Contractor</h2>
+            <p>Selecting the right contractor is one of the most important decisions in your renovation.</p>
+            <p><strong>Before hiring, verify:</strong></p>
+            <ul>
+                <li>Licensing and insurance</li>
+                <li>Experience with NYC buildings</li>
+                <li>Previous project examples</li>
+                <li>Client references and reviews</li>
+            </ul>
+            <p>Contractors familiar with NYC construction logistics can prevent delays related to permits, inspections, and building management requirements.</p>
 
             <h2>5. Timeline Expectations</h2>
-            <p>NYC projects often take longer due to building logistics, elevator reservations, and inspections. Add buffer time to any estimate—especially in high-rise buildings.</p>
+            <p>Renovations in NYC often take longer than expected due to building logistics.</p>
+            <p><strong>Common factors that affect timelines include:</strong></p>
+            <ul>
+                <li>Elevator reservations for materials</li>
+                <li>Limited construction hours in residential buildings</li>
+                <li>Permit approvals and inspections</li>
+                <li>Delivery delays</li>
+            </ul>
+            <p>For this reason, it's always wise to add a buffer of 15–25% to your expected project timeline.</p>
 
-            <h2>6. Material Selection</h2>
-            <p>Order materials early. Supply chain delays are common. Consider durable, low-maintenance finishes that hold up to NYC wear and tear.</p>
+            <h2>6. Smart Material Selection</h2>
+            <p>Material choices affect both cost and durability.</p>
+            <p><strong>In NYC homes, it's often recommended to prioritize:</strong></p>
+            <ul>
+                <li>Durable countertops and flooring</li>
+                <li>Moisture-resistant materials in bathrooms</li>
+                <li>Easy-to-maintain finishes</li>
+            </ul>
+            <p>Ordering materials early can also prevent delays caused by supply chain issues.</p>
+
+            <h2>Before You Start Your Renovation</h2>
+            <p>Planning ahead can save time, money, and stress during your project.</p>
+            <p>If you are considering a renovation in NYC, getting an early estimate can help you better understand the potential scope and budget.</p>
+            <p>You can also use our <a href="{{ route('cost-calculator') }}">Renovation Cost Calculator</a> to estimate typical project ranges based on your project size and location.</p>
         </div>
 
         <div class="mt-12 p-6 bg-[#003366]/5 dark:bg-[#336699]/10 rounded-xl border border-[#336699]/20">

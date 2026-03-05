@@ -69,6 +69,7 @@ class QuoteController extends Controller
             'calculator_budget_min' => $calcMin,
             'calculator_budget_max' => $calcMax,
             'calculator_sqft' => $validated['calculator_sqft'] ?? null,
+            'calculator_type' => $calcType,
             'calculator_borough' => $validated['calculator_borough'] ?? null,
             'calculator_finish_level' => $validated['calculator_finish_level'] ?? null,
         ], false);
@@ -192,6 +193,7 @@ class QuoteController extends Controller
             'calculator_budget_min' => $quote->calculator_budget_min,
             'calculator_budget_max' => $quote->calculator_budget_max,
             'calculator_sqft' => $quote->calculator_sqft,
+            'calculator_type' => $quote->calculator_type,
             'calculator_borough' => $quote->calculator_borough,
             'calculator_finish_level' => $quote->calculator_finish_level,
         ], $hasPhotos);
