@@ -9,6 +9,7 @@ use App\Models\QuoteAttachment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -157,9 +158,16 @@ class QuoteController extends Controller
         $quote = Quote::findOrFail($validated['quote_id']);
 
         if (!$quote->is_partial) {
-            return back()->withErrors(['quote' => 'Esta solicitud ya fue completada.'])->withInput();
+            return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
         }
 
+        // Prevent duplicate processing (double submit / race condition)
+        $lock = Cache::lock('quote_complete_' . $quote->id, 15);
+        if (!$lock->get()) {
+            return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
+        }
+
+        try {
         $hasPhotos = $request->hasFile('photos');
         $tracking = Quote::extractTrackingFromRequest($request);
         if (empty($quote->utm_source) && !empty($tracking['utm_source'])) {
@@ -228,5 +236,8 @@ class QuoteController extends Controller
         AddLeadToEmailSequence::dispatch($quote);
 
         return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
+        } finally {
+            $lock->release();
+        }
     }
 }

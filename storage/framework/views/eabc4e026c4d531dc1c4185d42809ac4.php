@@ -15,33 +15,60 @@
 <?php $__env->startPush('schema'); ?>
 <x-schema-breadcrumb :items="[
     ['name' => 'Home', 'url' => route('home')],
-    ['name' => "Construction Company {$cityName}", 'url' => route('pillar.city', $city)],
+    ['name' => "Renovation Contractor {$cityName}", 'url' => route('pillar.city', $city)],
 ]" />
+<?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($faqs) && count($faqs) > 0): ?>
+<?php if (isset($component)) { $__componentOriginalff01659efe7d00432b9a60d5c292949f = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalff01659efe7d00432b9a60d5c292949f = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.schema-faq','data' => ['faqs' => $faqs]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('schema-faq'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['faqs' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($faqs)]); ?>
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalff01659efe7d00432b9a60d5c292949f)): ?>
+<?php $attributes = $__attributesOriginalff01659efe7d00432b9a60d5c292949f; ?>
+<?php unset($__attributesOriginalff01659efe7d00432b9a60d5c292949f); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalff01659efe7d00432b9a60d5c292949f)): ?>
+<?php $component = $__componentOriginalff01659efe7d00432b9a60d5c292949f; ?>
+<?php unset($__componentOriginalff01659efe7d00432b9a60d5c292949f); ?>
+<?php endif; ?>
+<?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 <?php $__env->stopPush(); ?>
 
 <?php $__env->startSection('content'); ?>
-    <!-- Hero -->
+    
     <section class="relative py-32 bg-gradient-to-br from-[#003366] to-[#336699]">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
             <nav class="text-sm text-white/80 mb-6" aria-label="Breadcrumb">
                 <a href="<?php echo e(route('home')); ?>" class="hover:text-white">Home</a>
                 <span class="mx-2">/</span>
-                <span>Construction Company <?php echo e($cityName); ?></span>
+                <span>Renovation Contractor <?php echo e($cityName); ?></span>
             </nav>
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-4">
                 <?php echo e($heroTitle); ?>
 
             </h1>
             <p class="text-xl text-white/90 mb-8"><?php echo e($heroSubtitle); ?></p>
-            <a href="<?php echo e(route('home')); ?>#quote" class="inline-flex items-center bg-white text-[#003366] px-8 py-4 rounded-lg hover:bg-[#CCCC99] transition-all font-medium text-lg shadow-lg">
-                <?php echo e($hero['cta_text']); ?>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="<?php echo e(route('home')); ?>#quote" class="inline-flex items-center justify-center bg-white text-[#003366] px-8 py-4 rounded-lg hover:bg-[#CCCC99] transition-all font-medium text-lg shadow-lg">
+                    <?php echo e($hero['cta_text']); ?>
 
-                <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-            </a>
+                    <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </a>
+                <a href="<?php echo e($calculatorUrl ?? route('cost-calculator')); ?>" class="inline-flex items-center justify-center bg-white/20 text-white border-2 border-white px-8 py-4 rounded-lg hover:bg-white/30 transition-all font-medium text-lg">
+                    Try Cost Calculator
+                </a>
+            </div>
         </div>
     </section>
 
-    <!-- Main Content -->
+    
     <section class="py-24 bg-white dark:bg-gray-900">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-[#003366] dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-[#336699]">
@@ -51,10 +78,10 @@
         </div>
     </section>
 
-    <!-- Internal Links: Services -->
+    
     <section class="py-16 bg-gray-50 dark:bg-gray-800/50">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-8 text-center">Our Construction Services</h2>
+            <h2 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-8 text-center">Services in <?php echo e($cityName); ?></h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $services; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <a href="<?php echo e(route('services.show', $service->slug)); ?>" class="block p-6 bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition-all border border-gray-100 dark:border-gray-700">
@@ -67,7 +94,59 @@
         </div>
     </section>
 
-    <!-- Internal Links: Projects -->
+    
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($typicalCosts)): ?>
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6 text-center">Typical Renovation Costs in <?php echo e($cityName); ?></h2>
+            <div class="overflow-x-auto">
+                <table class="w-full border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                    <thead class="bg-[#003366]/10 dark:bg-[#336699]/20">
+                        <tr>
+                            <th class="text-left px-4 py-3 text-[#003366] dark:text-white font-medium">Renovation Type</th>
+                            <th class="text-right px-4 py-3 text-[#003366] dark:text-white font-medium">Typical Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $typicalCosts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $row): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <tr>
+                            <td class="px-4 py-3 text-gray-700 dark:text-gray-300"><?php echo e($row['label']); ?></td>
+                            <td class="px-4 py-3 text-right font-medium text-[#003366] dark:text-white">$<?php echo e(number_format($row['min'] / 1000)); ?>k – $<?php echo e(number_format($row['max'] / 1000)); ?>k</td>
+                        </tr>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+            <p class="mt-6 text-center">
+                <a href="<?php echo e($calculatorUrl ?? route('cost-calculator')); ?>" class="inline-flex items-center text-[#336699] hover:underline font-medium">
+                    Use our NYC Renovation Cost Calculator →
+                </a>
+            </p>
+        </div>
+    </section>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+    
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($buildingRegulations)): ?>
+    <section class="py-16 bg-gray-50 dark:bg-gray-800/50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6 text-center">Building Regulations in <?php echo e($cityName); ?></h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">
+                Many <?php echo e($cityName); ?> buildings require renovation permits and approvals before work begins. Our team manages:
+            </p>
+            <ul class="space-y-2">
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $buildingRegulations; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <li class="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                    <span class="text-green-600 dark:text-green-400 mt-0.5">✔</span>
+                    <span><?php echo e($item); ?></span>
+                </li>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+            </ul>
+        </div>
+    </section>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+    
     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($projects->isNotEmpty()): ?>
     <section class="py-16 bg-white dark:bg-gray-900">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -89,15 +168,64 @@
     </section>
     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
-    <!-- CTA -->
+    
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($boroughInsight)): ?>
+    <section class="py-16 bg-[#003366]/5 dark:bg-[#336699]/10">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-6 text-center">Renovation Trends in <?php echo e($cityName); ?></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white dark:bg-gray-800 rounded-xl border border-[#336699]/20">
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Average kitchen renovation</p>
+                    <p class="text-xl font-bold text-[#003366] dark:text-white">$<?php echo e(number_format($boroughInsight['avg_kitchen'] / 1000)); ?>k</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Average project size</p>
+                    <p class="text-xl font-bold text-[#003366] dark:text-white"><?php echo e(number_format($boroughInsight['avg_sqft'])); ?> sq ft</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Most popular finish</p>
+                    <p class="text-xl font-bold text-[#003366] dark:text-white"><?php echo e(ucfirst($boroughInsight['popular_finish'] ?? 'Standard')); ?></p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Typical timeline</p>
+                    <p class="text-xl font-bold text-[#003366] dark:text-white"><?php echo e($boroughInsight['avg_timeline'] ?? '6 weeks'); ?></p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+    
+    <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(!empty($faqs) && count($faqs) > 0): ?>
+    <section class="py-16 bg-white dark:bg-gray-900">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-serif font-bold text-[#003366] dark:text-white mb-8 text-center">Frequently Asked Questions</h2>
+            <div class="space-y-6">
+                <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $faqs; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $faq): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <div class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0">
+                    <h3 class="font-semibold text-[#003366] dark:text-white mb-2"><?php echo e($faq['question'] ?? ''); ?></h3>
+                    <p class="text-gray-600 dark:text-gray-300"><?php echo e($faq['answer'] ?? ''); ?></p>
+                </div>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+            </div>
+        </div>
+    </section>
+    <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+
+    
     <section class="py-24 bg-[#003366] dark:bg-[#1e3a5f]">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-serif font-bold text-white mb-4">Ready to Start Your <?php echo e($cityName); ?> Project?</h2>
+            <h2 class="text-3xl font-serif font-bold text-white mb-4">Get a Free <?php echo e($cityName); ?> Renovation Quote</h2>
             <p class="text-white/90 mb-8">Free estimates. We respond within 24 hours.</p>
-            <a href="<?php echo e(route('home')); ?>#quote" class="inline-flex items-center bg-white text-[#003366] px-8 py-4 rounded-lg hover:bg-[#CCCC99] transition-all font-medium text-lg">
-                <?php echo e($hero['cta_text']); ?>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="<?php echo e(route('home')); ?>#quote" class="inline-flex items-center justify-center bg-white text-[#003366] px-8 py-4 rounded-lg hover:bg-[#CCCC99] transition-all font-medium text-lg">
+                    <?php echo e($hero['cta_text']); ?>
 
-            </a>
+                </a>
+                <a href="<?php echo e($calculatorUrl ?? route('cost-calculator')); ?>" class="inline-flex items-center justify-center bg-white/20 text-white border-2 border-white px-8 py-4 rounded-lg hover:bg-white/30 transition-all font-medium text-lg">
+                    Calculate Your Renovation Cost
+                </a>
+            </div>
         </div>
     </section>
 <?php $__env->stopSection(); ?>

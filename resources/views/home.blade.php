@@ -555,6 +555,7 @@
                      totalSteps: 2,
                      partialQuoteId: null,
                      saving: false,
+                     formSubmitted: false,
                      quotePrefill: @js($quotePrefill ?? []),
                      formData: {
                          service: '',
@@ -697,7 +698,8 @@
                     </div>
                 </div>
                 
-                <form action="{{ route('quote.complete') }}" method="POST" enctype="multipart/form-data" id="quoteForm" x-ref="quoteForm">
+                <form action="{{ route('quote.complete') }}" method="POST" enctype="multipart/form-data" id="quoteForm" x-ref="quoteForm"
+                       @@submit="if (formSubmitted) $event.preventDefault(); else formSubmitted = true">
                     @csrf
                     <input type="hidden" name="quote_id" :value="partialQuoteId" x-model="partialQuoteId">
                     
@@ -910,10 +912,11 @@
                             </button>
                             <div class="text-right">
                                 <button type="submit" 
-                                        :disabled="!partialQuoteId"
-                                        :class="partialQuoteId ? 'bg-[#003366] hover:bg-[#004080] dark:bg-[#336699] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
+                                        :disabled="!partialQuoteId || formSubmitted"
+                                        :class="(partialQuoteId && !formSubmitted) ? 'bg-[#003366] hover:bg-[#004080] dark:bg-[#336699] dark:hover:bg-[#4a90e2]' : 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'"
                                         class="text-white px-8 py-3 rounded-lg font-medium transition-all">
-                                    Submit Request
+                                    <span x-show="!formSubmitted">Submit Request</span>
+                                    <span x-show="formSubmitted" x-cloak>Sending...</span>
                                 </button>
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">We usually respond in under 24 hours</p>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">No obligation, completely free</p>

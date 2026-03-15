@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('title', 'Blue Draft - Expert Construction Solutions'); ?>
 
 <?php $__env->startSection('content'); ?>
