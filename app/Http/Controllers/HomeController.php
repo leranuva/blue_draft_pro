@@ -202,8 +202,11 @@ class HomeController extends Controller
         // Si es una solicitud de cotización, las reglas son diferentes
         if ($request->has('quote_request')) {
             $rules['service'] = 'required|string';
+            $rules['phone'] = 'nullable|string|max:20';
+            $rules['address'] = 'nullable|string|max:500';
             $rules['message'] = 'nullable|string|max:2000';
-            $rules['photos.*'] = 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'; // 10MB max
+            $rules['photos'] = 'nullable|array|max:5';
+            $rules['photos.*'] = 'required|image|mimes:jpeg,png,jpg,gif|max:10240';
         } else {
             $rules['service'] = 'required|string';
             $rules['budget'] = 'nullable|string';
@@ -225,7 +228,7 @@ class HomeController extends Controller
 
             $result = $response->json();
 
-            if (!$result['success'] ?? false) {
+            if (($result['success'] ?? false) !== true) {
                 return back()->withErrors(['recaptcha' => 'La verificación de reCAPTCHA falló. Por favor, inténtalo de nuevo.'])->withInput();
             }
         }
@@ -261,7 +264,7 @@ class HomeController extends Controller
             // Process and save photos if they exist
             if ($request->hasFile('photos')) {
                 foreach ($request->file('photos') as $photo) {
-                    $path = $photo->store('quotes/' . $quote->id, 'public');
+                    $path = $photo->store('quotes/' . $quote->id, 'quote_attachments');
                     
                     QuoteAttachment::create([
                         'quote_id' => $quote->id,

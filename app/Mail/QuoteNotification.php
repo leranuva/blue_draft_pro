@@ -60,8 +60,8 @@ class QuoteNotification extends Mailable
         $attachments = [];
         
         foreach ($this->quote->attachments as $attachment) {
-            if (Storage::disk('public')->exists($attachment->file_path)) {
-                $attachments[] = Attachment::fromStorageDisk('public', $attachment->file_path)
+            if (Storage::disk('quote_attachments')->exists($attachment->file_path)) {
+                $attachments[] = Attachment::fromStorageDisk('quote_attachments', $attachment->file_path)
                     ->as($attachment->original_name);
             }
         }

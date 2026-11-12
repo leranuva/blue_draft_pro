@@ -38,6 +38,13 @@ return [
             'report' => false,
         ],
 
+        'quote_attachments' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/quote-attachments'),
+            'visibility' => 'private',
+            'throw' => true,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

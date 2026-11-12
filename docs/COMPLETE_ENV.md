@@ -55,7 +55,7 @@ RECAPTCHA_SECRET_KEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
 ```env
 APP_NAME="Blue Draft"
 APP_ENV=production
-APP_KEY=base64:MASzB2jL6ZrU1cI4QHMZSh+xjpwKuLzCW4HgKrTfvfI=
+APP_KEY=
 APP_DEBUG=false
 APP_URL=https://leranuva.com
 

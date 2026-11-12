@@ -29,7 +29,8 @@ class MetricsSystemTest extends TestCase
 
     public function test_dashboard_renders_without_errors_when_authenticated(): void
     {
-        $user = User::factory()->create(['email' => 'admin@bluedraft.cc']);
+        $user = User::factory()->create(['is_admin' => true]);
+        $user->saveAppAuthenticationSecret('JBSWY3DPEHPK3PXP');
         $response = $this->actingAs($user)->get('/system-bd-access');
         $response->assertSuccessful();
     }

@@ -14,8 +14,12 @@ class RoutesTest extends TestCase
 
     public function test_home_returns_200(): void
     {
-        $response = $this->get('/');
-        $response->assertStatus(200);
+        $response = $this->get('https://localhost/');
+        $response->assertStatus(200)
+            ->assertHeader('X-Content-Type-Options', 'nosniff')
+            ->assertHeader('Strict-Transport-Security', 'max-age=86400');
+        $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString("frame-ancestors 'none'", $response->headers->get('Content-Security-Policy'));
     }
 
     public function test_sitemap_returns_valid_xml(): void
@@ -127,10 +131,11 @@ class RoutesTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_project_proposal_returns_200(): void
+    public function test_internal_presentations_are_not_public(): void
     {
         $response = $this->get('/project-proposal');
-        $response->assertStatus(200);
+        $response->assertNotFound();
+        $this->get('/evaluacion-proyecto')->assertNotFound();
     }
 
     public function test_lead_magnet_guide_redirects_without_session(): void

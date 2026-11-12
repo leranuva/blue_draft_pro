@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Http\Middleware\Authenticate;
+use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Filament\Http\Middleware\AuthenticateSession;
 use App\Filament\Pages\HeroSettings;
 use App\Filament\Pages\AboutSettings;
@@ -18,10 +19,13 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use App\Http\Controllers\PresentationController;
+use App\Http\Controllers\ProjectProposalController;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -34,6 +38,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('system-bd-access') // URL personalizada y discreta
             ->login()
+            ->profile()
+            ->multiFactorAuthentication([AppAuthentication::make()], isRequired: true)
+            ->authenticatedRoutes(function (Panel $panel): void {
+                Route::middleware($panel->getMultiFactorAuthenticationRequiredMiddleware())->group(function (): void {
+                    Route::get('/evaluacion-proyecto', [PresentationController::class, 'show'])->name('presentation');
+                    Route::get('/project-proposal', [ProjectProposalController::class, 'show'])->name('project-proposal');
+                });
+            })
             ->brandName('Blue Draft Admin')
             ->colors([
                 'primary' => Color::hex('#003366'), // Azul oscuro de Blue Draft
@@ -66,6 +78,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \App\Http\Middleware\CacheHeaders::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

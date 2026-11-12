@@ -1,9 +1,18 @@
+<IfModule mod_headers.c>
+    Header unset X-Powered-By
+    Header always unset X-Powered-By
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
+
+    # Protect legacy client uploads and diagnostics during rolling deployments.
+    RewriteRule ^(?:storage/quotes(?:/|$)|(?:check-extensions|test-images)\.php(?:/|$)) - [R=404,L,NC]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .

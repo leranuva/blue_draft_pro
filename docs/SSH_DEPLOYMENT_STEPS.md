@@ -137,17 +137,13 @@ Migrated:  2025_12_24_232340_create_projects_table
 ...
 ```
 
-### 5.3 Ejecutar Seeders
+### 5.3 Aprovisionar administrador
 
 ```bash
-# Ejecutar todos los seeders
-php artisan db:seed --force
+php artisan admin:provision administrador@example.com
 ```
 
-Esto creará:
-- ✅ Usuario administrador (info@bluedraft.cc)
-- ✅ Configuraciones iniciales del sitio
-- ✅ Proyectos de ejemplo
+Usa el correo individual aprobado y configura MFA al iniciar sesión.
 
 ## 🔗 Paso 6: Crear Enlace Simbólico de Storage
 
@@ -217,8 +213,7 @@ Visita:
 - `https://leranuva.com/system-bd-access`
 
 Credenciales:
-- Email: `info@bluedraft.cc`
-- Contraseña: `BlueDraft2024!`
+- Usa las credenciales individuales aprovisionadas y el código MFA.
 
 ## 🔍 Comandos de Verificación
 
@@ -285,7 +280,7 @@ php artisan view:cache
 - [ ] `composer install` ejecutado sin errores
 - [ ] `APP_KEY` generado
 - [ ] Migraciones ejecutadas
-- [ ] Seeders ejecutados
+- [ ] Administrador aprovisionado y MFA verificada
 - [ ] Enlace simbólico de storage creado
 - [ ] Permisos configurados (775 en storage y bootstrap/cache)
 - [ ] Configuración cacheada
@@ -302,7 +297,7 @@ php artisan view:cache
 composer install --optimize-autoloader --no-dev --no-interaction
 php artisan key:generate
 php artisan migrate --force
-php artisan db:seed --force
+php artisan admin:provision administrador@example.com
 php artisan storage:link
 chmod -R 775 storage bootstrap/cache
 php artisan optimize:clear

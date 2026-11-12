@@ -26,9 +26,9 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "${YELLOW}🔑 Verificando APP_KEY...${NC}"
-if ! grep -q "APP_KEY=base64:" .env 2>/dev/null; then
-    echo -e "${YELLOW}⚠️  APP_KEY no encontrado. Generando...${NC}"
-    php artisan key:generate --force
+if [ -z "${APP_KEY:-}" ] && ! grep -qE '^APP_KEY=.+$' .env 2>/dev/null; then
+    echo "Configura APP_KEY antes de desplegar."
+    exit 1
 fi
 
 echo -e "${YELLOW}🗄️  Ejecutando migraciones...${NC}"
@@ -38,9 +38,6 @@ if [ $? -ne 0 ]; then
     echo -e "${RED}❌ Error al ejecutar migraciones${NC}"
     exit 1
 fi
-
-echo -e "${YELLOW}🌱 Ejecutando seeders...${NC}"
-php artisan db:seed --force
 
 echo -e "${YELLOW}🔗 Creando enlace simbólico de storage...${NC}"
 php artisan storage:link

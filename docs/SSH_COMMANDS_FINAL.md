@@ -1,20 +1,10 @@
 # 🚀 Comandos SSH Finales para Hostinger (Sin Git)
 
-Comandos en orden para completar el despliegue después de corregir el DatabaseSeeder.
+Comandos en orden para completar el despliegue.
 
-## ✅ Paso 1: Ejecutar Seeders
+## ✅ Paso 1: Aprovisionar administrador
 
-```bash
-php artisan db:seed --force
-```
-
-**Espera a que termine**. Deberías ver mensajes como:
-```
-INFO  Seeding database.
-INFO  Seeding: AdminUserSeeder
-INFO  Seeding: ProjectSeeder
-...
-```
+Ejecuta el comando admin:provision según docs/user.md después de migrar.
 
 ## ✅ Paso 2: Crear Enlace Simbólico de Storage
 
@@ -79,8 +69,8 @@ php artisan tinker
 ## 📋 Comandos Completos (Copia y Pega)
 
 ```bash
-# 1. Ejecutar seeders
-php artisan db:seed --force
+# 1. Aprovisionar administrador
+php artisan admin:provision administrador@example.com
 
 # 2. Crear enlace simbólico
 rm -f public/storage
@@ -110,8 +100,7 @@ Después de ejecutar todos los comandos:
    - Todas las secciones visibles
 
 2. **Panel de Administración**: `https://leranuva.com/system-bd-access`
-   - Email: `info@bluedraft.cc`
-   - Contraseña: `BlueDraft2024!`
+   - Usa las credenciales individuales aprovisionadas y el código MFA.
 
 ## 🐛 Si Hay Problemas
 
@@ -150,7 +139,7 @@ php artisan optimize:clear
 
 ## ✅ Checklist Final
 
-- [ ] Seeders ejecutados sin errores
+- [ ] Administrador aprovisionado y MFA verificada
 - [ ] Enlace simbólico `public/storage` creado
 - [ ] Permisos configurados (775)
 - [ ] Configuración cacheada

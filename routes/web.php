@@ -10,17 +10,13 @@ use App\Http\Controllers\PillarPageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\LeadMagnetController;
 use App\Http\Controllers\CostCalculatorController;
-use App\Http\Controllers\ProjectProposalController;
 use App\Http\Controllers\PillarCityController;
-use App\Http\Controllers\PresentationController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/evaluacion-proyecto', [PresentationController::class, 'show'])->name('presentation');
-Route::get('/project-proposal', [ProjectProposalController::class, 'show'])->name('project-proposal');
 Route::post('/contact', [HomeController::class, 'submitContact'])->name('contact.submit')->middleware('throttle:5,1');
 
 // Quote multi-step: guardado parcial (Step 1) y completado (Step 2)
-Route::post('/quote/partial', [QuoteController::class, 'savePartial'])->name('quote.partial');
+Route::post('/quote/partial', [QuoteController::class, 'savePartial'])->name('quote.partial')->middleware('throttle:10,1,quote-partial');
 Route::post('/quote/complete', [QuoteController::class, 'complete'])->name('quote.complete')->middleware('throttle:5,1');
 
 // Phase 2: SEO landing pages - /services y /blog redirigen a la landing

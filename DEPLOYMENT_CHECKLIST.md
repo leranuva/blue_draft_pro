@@ -6,6 +6,14 @@
 
 Usa esta checklist para asegurarte de que todo esté listo antes y después del despliegue.
 
+## Actualización de seguridad
+
+1. En Hostinger, confirma que el directorio web sea `public/`, que HTTP redirija a HTTPS y que `APP_DEBUG=false`, `SESSION_SECURE_COOKIE=true` y `expose_php=Off`. Comprueba de forma privada si se usaron la contraseña inicial o la antigua clave de aplicación publicada en la documentación. Rota las credenciales expuestas, revoca sesiones y revisa los accesos. Antes de rotar `APP_KEY`, identifica los datos cifrados que deban preservarse.
+2. En una ventana de mantenimiento, instala el código y los recursos compilados, ejecuta `php artisan migrate --force` y aprovisiona cada administrador con `php artisan admin:provision correo`. Valida el registro MFA antes de reabrir el panel.
+3. Bloquea `/storage/quotes/` en el servidor y en cualquier CDN que sirva archivos directamente. Ejecuta `php artisan quotes:privatize-attachments` y confirma que termina correctamente. Purga del CDN las fotos antiguas, las páginas internas, los diagnósticos y el HTML con sesión. Excluye del caché compartido todas las rutas dinámicas y conserva la caché para los recursos estáticos versionados.
+4. Verifica que los diagnósticos y las URL antiguas de adjuntos devuelvan 404, que el HTML con sesión envíe `private, no-store`, que los adjuntos se descarguen desde el panel autenticado y que las notificaciones sigan incluyendo las fotos.
+5. Prueba una política más estricta mediante `CSP_REPORT_ONLY` en preproducción. Incluye las integraciones activas de reCAPTCHA, analítica y fuentes en las pruebas. Pasa a aplicación obligatoria mediante `CSP_ENFORCE` después de verificar los scripts de la web y del panel. Amplía HSTS tras verificar HTTPS y cualquier subdominio que se quiera incluir.
+
 ## 📋 Antes de Subir a Hostinger
 
 ### Preparación Local
@@ -43,8 +51,8 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 - [ ] Usuario de base de datos creado con permisos
 - [ ] Credenciales de BD configuradas en `.env`
 - [ ] Migraciones ejecutadas: `php artisan migrate --force`
-- [ ] Seeders ejecutados: `php artisan db:seed --force`
-- [ ] Usuario administrador creado (info@bluedraft.cc)
+- [ ] Administradores aprobados aprovisionados con `php artisan admin:provision correo`
+- [ ] Acceso al panel verificado con MFA
 
 ### Dependencias
 - [ ] Composer instalado en el servidor
@@ -124,8 +132,7 @@ Usa esta checklist para asegurarte de que todo esté listo antes y después del 
 
 ### Panel de Administración
 - **URL**: `https://tudominio.com/system-bd-access`
-- **Email**: `info@bluedraft.cc`
-- **Contraseña**: `BlueDraft2024!`
+- Usa las credenciales individuales aprovisionadas y el código MFA.
 
 ### Base de Datos
 - **Host**: (anotar)

@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @section('title', $service->seo_title ?: $service->title . ' | Blue Draft')
-@section('meta_description', $service->seo_description)
+@section('meta_description', $service->seo_description ?? $service->title)
 
 @push('tracking_data')
-<script>window.__trackingData = { service_slug: '{{ $service->slug }}', service_title: '{{ addslashes($service->title) }}' };</script>
+<script>window.__trackingData = {{ Illuminate\Support\Js::from(['service_slug' => $service->slug, 'service_title' => $service->title]) }};</script>
 @endpush
 
 @push('meta')

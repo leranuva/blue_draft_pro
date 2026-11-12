@@ -18,7 +18,7 @@ class AdminTest extends TestCase
         $this->assertStringContainsString('login', $response->headers->get('Location'));
     }
 
-    public function test_admin_accessible_when_authenticated(): void
+    public function test_corporate_email_alone_does_not_grant_admin_access(): void
     {
         $user = User::factory()->create([
             'email' => 'admin@bluedraft.cc',
@@ -26,6 +26,24 @@ class AdminTest extends TestCase
 
         $response = $this->actingAs($user)->get('/system-bd-access');
 
-        $response->assertSuccessful();
+        $response->assertForbidden();
+    }
+
+    public function test_administrator_must_enroll_in_mfa(): void
+    {
+        $user = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($user)->get('/system-bd-access')->assertRedirect();
+    }
+
+    public function test_internal_presentations_require_the_admin_panel(): void
+    {
+        $this->get('/system-bd-access/project-proposal')->assertRedirect();
+
+        $user = User::factory()->create(['is_admin' => true]);
+        $this->actingAs($user)->get('/system-bd-access/project-proposal')->assertRedirect();
+
+        $user->saveAppAuthenticationSecret('JBSWY3DPEHPK3PXP');
+        $this->get('/system-bd-access/project-proposal')->assertOk();
     }
 }

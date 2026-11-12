@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'csp_report_only' => env('CSP_REPORT_ONLY'),
+    'csp_enforce' => env('CSP_ENFORCE'),
 
     /*
     |--------------------------------------------------------------------------

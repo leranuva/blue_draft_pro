@@ -9,10 +9,11 @@ use App\Models\QuoteAttachment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class QuoteController extends Controller
 {
@@ -28,15 +29,10 @@ class QuoteController extends Controller
             'service' => 'required|string|in:residential,commercial,renovation,other',
             'timeline' => 'nullable|string|max:50',
             'property_type' => 'nullable|string|max:50',
-            'calculator_budget_min' => 'nullable|string|max:20',
-            'calculator_budget_max' => 'nullable|string|max:20',
             'calculator_sqft' => 'nullable|integer|min:1|max:50000',
-            'calculator_type' => 'nullable|string|max:50',
-            'calculator_borough' => 'nullable|string|max:50',
-            'calculator_finish_level' => 'nullable|string|max:20',
-            'calculator_algorithm_version' => 'nullable|string|max:20',
-            'estimated_value' => 'nullable|numeric|min:0',
-            'calculation_hash' => 'nullable|string|max:64',
+            'calculator_type' => 'nullable|string|in:' . implode(',', array_keys(config('cost_calculator.price_ranges'))),
+            'calculator_borough' => 'nullable|string|in:' . implode(',', array_keys(config('cost_calculator.borough_multipliers'))),
+            'calculator_finish_level' => 'nullable|string|in:' . implode(',', array_keys(config('cost_calculator.finish_multipliers'))),
         ]);
 
         $tracking = Quote::extractTrackingFromRequest($request);
@@ -45,14 +41,29 @@ class QuoteController extends Controller
             $tracking['lead_source'] = 'calculator';
         }
 
-        $calcMin = $validated['calculator_budget_min'] ?? null;
-        $calcMax = $validated['calculator_budget_max'] ?? null;
-        $estimatedValue = !empty($validated['estimated_value']) ? (float) $validated['estimated_value'] : null;
-        if ($fromCalculator && $calcMin && $calcMax && !$estimatedValue) {
-            $estimatedValue = round(((float) $calcMin + (float) $calcMax) / 2);
-        }
         $calcType = $validated['calculator_type'] ?? null;
         $calcBorough = $validated['calculator_borough'] ?? null;
+        $finish = $validated['calculator_finish_level'] ?? null;
+        $sqft = $validated['calculator_sqft'] ?? null;
+        $calcMin = $calcMax = $estimatedValue = $calculationHash = null;
+        if ($fromCalculator && $calcType && $calcBorough && $finish && $sqft) {
+            $config = config('cost_calculator');
+            $range = $config['price_ranges'][$calcType];
+            $boroughMultiplier = $config['type_borough_multipliers'][$calcType][$calcBorough]
+                ?? $config['borough_multipliers'][$calcBorough];
+            $scale = $config['sqft_adjustments'];
+            $scaleMultiplier = 1;
+            if ($sqft < $scale['small_threshold']) {
+                $scaleMultiplier = $scale['small_multiplier'];
+            } elseif ($sqft > $scale['large_threshold']) {
+                $scaleMultiplier = $scale['large_multiplier'];
+            }
+            $finishMultiplier = $config['finish_multipliers'][$finish];
+            $calcMin = (int) round($sqft * ($range['min'] * $boroughMultiplier * $finishMultiplier * $scaleMultiplier));
+            $calcMax = (int) round($sqft * ($range['max'] * $boroughMultiplier * $finishMultiplier * $scaleMultiplier));
+            $estimatedValue = round(($calcMin + $calcMax) / 2);
+            $calculationHash = hash('sha256', implode('|', [$sqft, $calcType, $calcBorough, $finish, $config['algorithm_version']]));
+        }
         $costRatioMatrix = config('cost_calculator.cost_ratio_type_borough', []);
         $costRatio = ($calcType && $calcBorough && isset($costRatioMatrix[$calcType][$calcBorough]))
             ? $costRatioMatrix[$calcType][$calcBorough]
@@ -100,17 +111,15 @@ class QuoteController extends Controller
             'calculator_type' => $validated['calculator_type'] ?? null,
             'calculator_borough' => $validated['calculator_borough'] ?? null,
             'calculator_finish_level' => $validated['calculator_finish_level'] ?? null,
-            'calculator_algorithm_version' => $validated['calculator_algorithm_version'] ?? null,
-            'calculation_hash' => $validated['calculation_hash'] ?? null,
+            'calculator_algorithm_version' => $calculationHash ? config('cost_calculator.algorithm_version') : null,
+            'calculation_hash' => $calculationHash,
             'internal_cost_estimate' => $internalCost,
             'expected_margin' => $expectedMargin,
             'lead_source' => $tracking['lead_source'] ?? null,
         ], $tracking));
 
-        Log::info('Partial quote saved (Step 1)', [
-            'quote_id' => $quote->id,
-            'email' => $quote->email,
-        ]);
+        $request->session()->put('quote_draft_id', $quote->id);
+        Log::info('Partial quote saved (Step 1)', ['quote_id' => $quote->id]);
 
         return response()->json([
             'success' => true,
@@ -124,12 +133,13 @@ class QuoteController extends Controller
     public function complete(Request $request): RedirectResponse
     {
         $rules = [
-            'quote_id' => 'required|integer|exists:quotes,id',
+            'quote_id' => 'required|integer',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
             'budget' => 'nullable|string|max:50',
             'message' => 'nullable|string|max:2000',
-            'photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
+            'photos' => 'nullable|array|max:5',
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
         ];
 
         if (config('services.recaptcha.secret')) {
@@ -139,6 +149,10 @@ class QuoteController extends Controller
         }
 
         $validated = $request->validate($rules);
+
+        if ((int) $validated['quote_id'] !== $request->session()->get('quote_draft_id')) {
+            return back()->withErrors(['quote_id' => 'Please start a new quote from this browser.']);
+        }
 
         // Verificar reCAPTCHA solo si está configurado
         $recaptchaSecret = config('services.recaptcha.secret');
@@ -150,24 +164,20 @@ class QuoteController extends Controller
             ]);
 
             $result = $response->json();
-            if (!$result['success'] ?? false) {
+            if (($result['success'] ?? false) !== true) {
                 return back()->withErrors(['recaptcha' => 'La verificación de reCAPTCHA falló. Por favor, inténtalo de nuevo.'])->withInput();
             }
         }
 
-        $quote = Quote::findOrFail($validated['quote_id']);
+        $quote = Quote::find($validated['quote_id']);
+        if (!$quote) {
+            return back()->withErrors(['quote_id' => 'Please start a new quote from this browser.']);
+        }
 
         if (!$quote->is_partial) {
             return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
         }
 
-        // Prevent duplicate processing (double submit / race condition)
-        $lock = Cache::lock('quote_complete_' . $quote->id, 15);
-        if (!$lock->get()) {
-            return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
-        }
-
-        try {
         $hasPhotos = $request->hasFile('photos');
         $tracking = Quote::extractTrackingFromRequest($request);
         if (empty($quote->utm_source) && !empty($tracking['utm_source'])) {
@@ -206,21 +216,41 @@ class QuoteController extends Controller
             'calculator_finish_level' => $quote->calculator_finish_level,
         ], $hasPhotos);
 
-        $quote->update($updateData);
+        $paths = [];
+        try {
+            $completed = DB::transaction(function () use ($quote, $updateData, $hasPhotos, $request, &$paths) {
+                $updated = Quote::whereKey($quote->id)->where('is_partial', true)->update($updateData);
+                if (!$updated) {
+                    return false;
+                }
 
-        if ($hasPhotos) {
-            foreach ($request->file('photos') as $photo) {
-                $path = $photo->store('quotes/' . $quote->id, 'public');
-                QuoteAttachment::create([
-                    'quote_id' => $quote->id,
-                    'file_path' => $path,
-                    'file_type' => $photo->getMimeType(),
-                    'original_name' => $photo->getClientOriginalName(),
-                    'file_size' => $photo->getSize(),
-                ]);
-            }
+                if ($hasPhotos) {
+                    foreach ($request->file('photos') as $photo) {
+                        $path = $photo->store('quotes/' . $quote->id, 'quote_attachments');
+                        $paths[] = $path;
+                        QuoteAttachment::create([
+                            'quote_id' => $quote->id,
+                            'file_path' => $path,
+                            'file_type' => $photo->getMimeType(),
+                            'original_name' => $photo->getClientOriginalName(),
+                            'file_size' => $photo->getSize(),
+                        ]);
+                    }
+                }
+
+                return true;
+            });
+        } catch (\Throwable $exception) {
+            Storage::disk('quote_attachments')->delete($paths);
+
+            throw $exception;
         }
 
+        if (!$completed) {
+            return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
+        }
+
+        $quote->refresh();
         $quote->load('attachments');
 
         try {
@@ -236,8 +266,5 @@ class QuoteController extends Controller
         AddLeadToEmailSequence::dispatch($quote);
 
         return back()->with('success', 'Thank you for your quote request! We will review your data and contact you soon.');
-        } finally {
-            $lock->release();
-        }
     }
 }

@@ -19,9 +19,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 3. Generar APP_KEY (si no existe)
-echo "🔑 Generando APP_KEY..."
-php artisan key:generate --force
+# 3. Exigir una clave aprovisionada para conservar los datos cifrados.
+if [ -z "${APP_KEY:-}" ] && ! grep -qE '^APP_KEY=.+$' .env 2>/dev/null; then
+    echo "Configura APP_KEY antes de desplegar."
+    exit 1
+fi
 
 # 4. Ejecutar migraciones
 echo "🗄️  Ejecutando migraciones..."
@@ -29,15 +31,6 @@ php artisan migrate --force
 
 if [ $? -ne 0 ]; then
     echo "❌ Error al ejecutar migraciones"
-    exit 1
-fi
-
-# 5. Ejecutar seeders
-echo "🌱 Ejecutando seeders..."
-php artisan db:seed --force
-
-if [ $? -ne 0 ]; then
-    echo "❌ Error al ejecutar seeders"
     exit 1
 fi
 
