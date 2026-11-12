@@ -51,7 +51,7 @@
     <section class="py-24 bg-white dark:bg-gray-900">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="prose prose-lg dark:prose-invert max-w-none prose-headings:text-[#003366] dark:prose-headings:text-white prose-p:text-gray-600 dark:prose-p:text-gray-300 prose-a:text-[#336699]">
-                {!! $content !!}
+                {!! Str::sanitizeHtml($content) !!}
             </div>
         </div>
     </section>

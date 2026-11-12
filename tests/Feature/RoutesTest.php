@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Post;
 use App\Models\Project;
 use App\Models\Service;
+use App\Models\Settings;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -66,6 +67,32 @@ class RoutesTest extends TestCase
     {
         $response = $this->get('/construction-company-manhattan');
         $response->assertStatus(200);
+    }
+
+    public function test_pillar_pages_keep_safe_markup_and_remove_unapproved_elements(): void
+    {
+        foreach ([
+            'nyc' => '/construction-company-new-york',
+            'manhattan' => '/construction-company-manhattan',
+        ] as $city => $url) {
+            Settings::set("pillar_{$city}_content", '<p><strong>Renovation details</strong></p><iframe title="Embedded example"></iframe>', 'text', "pillar_{$city}");
+
+            $this->get($url)->assertOk()
+                ->assertSee('<strong>Renovation details</strong>', false)
+                ->assertDontSee('title="Embedded example"', false);
+        }
+    }
+
+    public function test_home_uses_only_http_links_for_configured_destinations(): void
+    {
+        Settings::set('contact_schedule_url', 'ftp://example.com/appointment', 'text', 'contact');
+        Settings::set('footer_facebook_url', 'ftp://example.com/social', 'text', 'footer');
+        Settings::set('footer_linkedin_url', 'https://example.com/company', 'text', 'footer');
+
+        $this->get('/')->assertOk()
+            ->assertDontSee('Schedule a Call Instead')
+            ->assertDontSee('ftp://example.com/social')
+            ->assertSee('href="https://example.com/company"', false);
     }
 
     public function test_pillar_districts_all_return_200(): void
