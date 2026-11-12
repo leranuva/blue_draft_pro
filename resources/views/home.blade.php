@@ -567,7 +567,6 @@
                          timeline: '',
                          property_type: '',
                          message: '',
-                         photos: [],
                          calculator_budget_min: '',
                          calculator_budget_max: '',
                          estimated_value: '',
@@ -653,7 +652,6 @@
                                      name: file.name,
                                      size: file.size
                                  });
-                                 this.formData.photos.push(file);
                              }
                          });
                      },
@@ -663,7 +661,6 @@
                              URL.revokeObjectURL(this.uploadedFiles[index].preview);
                          }
                          this.uploadedFiles.splice(index, 1);
-                         this.formData.photos.splice(index, 1);
                      },
                      
                      handleDrop(event) {
@@ -677,7 +674,6 @@
                                      name: file.name,
                                      size: file.size
                                  });
-                                 this.formData.photos.push(file);
                              }
                          });
                      },
@@ -699,7 +695,8 @@
                 </div>
                 
                 <form action="{{ route('quote.complete') }}" method="POST" enctype="multipart/form-data" id="quoteForm" x-ref="quoteForm"
-                       @@submit="if (formSubmitted) $event.preventDefault(); else formSubmitted = true">
+                       @@submit="if (formSubmitted) $event.preventDefault(); else formSubmitted = true"
+                       @@formdata="$event.formData.delete('photos[]'); uploadedFiles.forEach(({ file }) => $event.formData.append('photos[]', file))">
                     @csrf
                     <input type="hidden" name="quote_id" :value="partialQuoteId" x-model="partialQuoteId">
                     

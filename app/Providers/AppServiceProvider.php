@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
                 ->pluck('value', 'key')
                 ->toArray();
 
-            View::share('footer', [
+            View::share('siteFooter', [
                 'description' => $footerSettings['footer_description'] ?? 'Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.',
                 'address' => $footerSettings['footer_address'] ?? '358 Amboy St, Brooklyn, NY 11212, USA',
                 'email_1' => $footerSettings['footer_email_1'] ?? config('mail.admin_notification_email'),
@@ -57,7 +57,7 @@ class AppServiceProvider extends ServiceProvider
             ]);
         } catch (\Exception $e) {
             // If table doesn't exist yet, use default values
-            View::share('footer', [
+            View::share('siteFooter', [
                 'description' => 'Expert Construction Solutions You Can Trust. Reliable construction services for your dream projects.',
                 'address' => '358 Amboy St, Brooklyn, NY 11212, USA',
                 'email_1' => config('mail.admin_notification_email'),
