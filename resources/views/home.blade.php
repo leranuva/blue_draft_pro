@@ -537,7 +537,7 @@
                     Tell us about your project and we'll provide a detailed estimate
                 </p>
                 <p class="text-sm text-gray-500 dark:text-gray-400 max-w-xl mx-auto mb-2">We respond within 24h. No spam.</p>
-                @if(!empty($contact['schedule_url']))
+                @if(Str::isUrl($contact['schedule_url'] ?? '', ['http', 'https']))
                 <p class="text-sm mb-4">
                     <a href="{{ $contact['schedule_url'] }}" target="_blank" rel="noopener" class="text-[#336699] dark:text-[#4a90e2] hover:underline font-medium">Schedule a Call Instead</a>
                 </p>
